@@ -46,22 +46,16 @@ export function TopBar({ profile }: { profile: Profile }) {
                 </p>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/settings">
-                  <UserRound className="size-4" aria-hidden /> Profile
-                </Link>
+              <DropdownMenuItem render={<Link href="/settings" />}>
+                <UserRound className="size-4" aria-hidden /> Profile
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/settings">
-                  <Settings className="size-4" aria-hidden /> Settings
-                </Link>
+              <DropdownMenuItem render={<Link href="/settings" />}>
+                <Settings className="size-4" aria-hidden /> Settings
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <form action={logout}>
-                <DropdownMenuItem asChild>
-                  <button type="submit" className="w-full">
-                    <LogOut className="size-4" aria-hidden /> Sign out
-                  </button>
+                <DropdownMenuItem render={<button type="submit" className="w-full" />}>
+                  <LogOut className="size-4" aria-hidden /> Sign out
                 </DropdownMenuItem>
               </form>
             </DropdownMenuContent>

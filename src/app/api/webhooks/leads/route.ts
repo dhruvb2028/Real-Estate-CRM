@@ -76,6 +76,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid webhook secret" }, { status: 401 });
   }
 
+  if (!orgId) {
+    return NextResponse.json({ error: "Organization could not be resolved" }, { status: 400 });
+  }
+  const resolvedOrgId = orgId;
+
   const d = parsed.data;
   const fullName = (d.fullName ?? d.full_name ?? d.name)!;
   const phone = (d.phone ?? d.phoneNumber ?? d.mobile)!;
@@ -84,7 +89,7 @@ export async function POST(request: NextRequest) {
   const { data: lead, error: insertErr } = await admin
     .from("leads")
     .insert({
-      organization_id: orgId,
+      organization_id: resolvedOrgId,
       full_name: fullName,
       phone,
       email: d.email || null,
@@ -109,7 +114,7 @@ export async function POST(request: NextRequest) {
   }
 
   await admin.from("activities").insert({
-    organization_id: orgId,
+    organization_id: resolvedOrgId,
     lead_id: lead.id,
     type: "lead_created",
     title: "Lead received",
@@ -117,13 +122,13 @@ export async function POST(request: NextRequest) {
     metadata: { webhook: true, raw_source: d.source ?? null },
   });
 
-  const assignment = await leadAssignmentService.assign(orgId, lead.id);
+  const assignment = await leadAssignmentService.assign(resolvedOrgId, lead.id);
 
   // Bridge call runs after the response is sent — external platforms get a
   // fast ACK and the call automation continues server-side.
   after(async () => {
     try {
-      await callService.initiateBridge(orgId!, lead.id);
+      await callService.initiateBridge(resolvedOrgId, lead.id);
     } catch (e) {
       console.error("[webhook/leads] bridge call failed:", e);
     }

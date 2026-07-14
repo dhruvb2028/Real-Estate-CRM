@@ -63,15 +63,22 @@ export function NotificationsBell({ userId }: { userId: string }) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative size-10" aria-label={`Notifications${unread ? ` (${unread} unread)` : ""}`}>
-          <Bell className="size-5" aria-hidden />
-          {unread > 0 && (
-            <span className="absolute right-1.5 top-1.5 flex size-4 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-white">
-              {unread > 9 ? "9+" : unread}
-            </span>
-          )}
-        </Button>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative size-10"
+            aria-label={`Notifications${unread ? ` (${unread} unread)` : ""}`}
+          />
+        }
+      >
+        <Bell className="size-5" aria-hidden />
+        {unread > 0 && (
+          <span className="absolute right-1.5 top-1.5 flex size-4 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-white">
+            {unread > 9 ? "9+" : unread}
+          </span>
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-80 p-0">
         <div className="flex items-center justify-between border-b border-border px-3 py-2">
