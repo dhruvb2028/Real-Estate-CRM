@@ -165,6 +165,46 @@ export async function deletePropertyImage(imageId: string): Promise<ActionState>
   return { ok: true };
 }
 
+export async function addPropertyDocument(
+  propertyId: string,
+  name: string,
+  url: string,
+  storagePath: string
+): Promise<ActionState> {
+  const profile = await requireProfile();
+  if (!name.trim() || !url) return { ok: false, error: "Invalid document" };
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("property_documents").insert({
+    organization_id: profile.organization_id,
+    property_id: propertyId,
+    name: name.trim().slice(0, 200),
+    url,
+    storage_path: storagePath,
+  });
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath(`/properties/${propertyId}`);
+  return { ok: true };
+}
+
+export async function deletePropertyDocument(documentId: string): Promise<ActionState> {
+  await requireProfile();
+  const supabase = await createClient();
+  const { data: doc, error } = await supabase
+    .from("property_documents")
+    .delete()
+    .eq("id", documentId)
+    .select("property_id, storage_path")
+    .single();
+  if (error) return { ok: false, error: error.message };
+  if (doc?.storage_path) {
+    await supabase.storage.from("property-docs").remove([doc.storage_path]);
+  }
+  if (doc) revalidatePath(`/properties/${doc.property_id}`);
+  return { ok: true };
+}
+
 export async function deleteProperty(propertyId: string): Promise<ActionState> {
   const profile = await requireProfile();
   if (!["admin", "sales_manager"].includes(profile.role)) {

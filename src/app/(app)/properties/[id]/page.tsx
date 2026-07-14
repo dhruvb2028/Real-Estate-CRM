@@ -15,6 +15,7 @@ import {
 import { requireProfile } from "@/lib/supabase/server";
 import { getLeadsForShare, getProperty } from "@/server/queries/properties";
 import { PropertyGallery } from "@/components/properties/gallery";
+import { DocumentManager } from "@/components/properties/document-manager";
 import { ShareWithLead } from "@/components/properties/share-with-lead";
 import { AvailabilitySelect } from "@/components/properties/availability-select";
 import { DeleteProperty } from "@/components/properties/delete-property";
@@ -168,6 +169,12 @@ export default async function PropertyDetailPage({
           </a>
         </CardContent>
       </Card>
+
+      <DocumentManager
+        orgId={profile.organization_id!}
+        propertyId={property.id}
+        documents={property.property_documents ?? []}
+      />
 
       {canDelete && (
         <div className="flex justify-end">

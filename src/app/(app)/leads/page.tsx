@@ -1,7 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { Plus, UsersRound } from "lucide-react";
+import {
+  Download,
+  FileSpreadsheet,
+  Kanban,
+  Plus,
+  Upload,
+  UsersRound,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { PageHeader } from "@/components/layout/page-header";
 import { LeadCard } from "@/components/leads/lead-card";
 import { LeadFilters } from "@/components/leads/lead-filters";
@@ -60,9 +73,31 @@ export default async function LeadsPage({
       <PageHeader
         title="Leads"
         action={
-          <Button render={<Link href="/leads/new" />} className="h-10">
-            <Plus className="size-4" aria-hidden /> Add lead
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" size="icon" render={<Link href="/leads/board" aria-label="Pipeline board view" />} className="size-10">
+              <Kanban className="size-4" aria-hidden />
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button variant="outline" size="icon" className="size-10" aria-label="Import or export leads" />
+                }
+              >
+                <FileSpreadsheet className="size-4" aria-hidden />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem render={<Link href="/leads/import" />}>
+                  <Upload className="size-4" aria-hidden /> Import CSV
+                </DropdownMenuItem>
+                <DropdownMenuItem render={<a href="/api/leads/export" download />}>
+                  <Download className="size-4" aria-hidden /> Export CSV
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button render={<Link href="/leads/new" />} className="h-10">
+              <Plus className="size-4" aria-hidden /> Add lead
+            </Button>
+          </div>
         }
       />
       <div className="space-y-4">

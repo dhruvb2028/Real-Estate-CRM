@@ -31,7 +31,7 @@ export default async function AttendancePage() {
     <div className="mx-auto max-w-2xl space-y-4">
       <PageHeader title="Attendance" description="GPS check-in and daily history" />
 
-      <CheckInCard today={today} />
+      <CheckInCard today={today} orgId={profile.organization_id!} userId={profile.id} />
 
       {/* Admin: team today */}
       {isManager && team && (

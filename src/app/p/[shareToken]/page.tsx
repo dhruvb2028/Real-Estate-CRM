@@ -4,6 +4,7 @@ import {
   Bath,
   BedDouble,
   Building2,
+  FileText,
   MapPin,
   Phone,
   Ruler,
@@ -44,6 +45,7 @@ interface PublicProperty {
   organization_name: string;
   organization_phone: string | null;
   images: { url: string; is_cover: boolean }[];
+  documents?: { name: string; url: string }[];
 }
 
 async function getPublicProperty(token: string): Promise<PublicProperty | null> {
@@ -168,6 +170,27 @@ export default async function PublicPropertyPage({
                 </span>
               ))}
             </div>
+          </section>
+        )}
+
+        {(property.documents?.length ?? 0) > 0 && (
+          <section>
+            <h2 className="mb-2 text-lg font-semibold">Brochures & documents</h2>
+            <ul className="space-y-2">
+              {property.documents!.map((doc) => (
+                <li key={doc.url}>
+                  <a
+                    href={doc.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2.5 rounded-xl border border-border bg-card px-4 py-3 text-sm font-medium transition-colors hover:bg-accent"
+                  >
+                    <FileText className="size-4.5 shrink-0 text-primary" aria-hidden />
+                    <span className="truncate">{doc.name}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
           </section>
         )}
       </main>

@@ -1,12 +1,14 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
-import { LogIn, LogOut, MapPin, MapPinOff } from "lucide-react";
+import { Camera, Loader2, LogIn, LogOut, MapPin, MapPinOff, X } from "lucide-react";
 import { toast } from "sonner";
+import { createClient } from "@/lib/supabase/client";
 import { checkIn, checkOut } from "@/server/actions/attendance";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { SubmitButton } from "@/components/layout/submit-button";
 import { ATTENDANCE_STATUS_LABELS } from "@/lib/constants";
@@ -14,9 +16,20 @@ import type { AttendanceRecord } from "@/lib/types";
 
 type Coords = { latitude: number; longitude: number } | null;
 
-export function CheckInCard({ today }: { today: AttendanceRecord | null }) {
+export function CheckInCard({
+  today,
+  orgId,
+  userId,
+}: {
+  today: AttendanceRecord | null;
+  orgId: string;
+  userId: string;
+}) {
   const [coords, setCoords] = useState<Coords>(null);
   const [geoState, setGeoState] = useState<"loading" | "ok" | "denied">("loading");
+  const [selfie, setSelfie] = useState<{ url: string; path: string } | null>(null);
+  const [selfieUploading, setSelfieUploading] = useState(false);
+  const selfieRef = useRef<HTMLInputElement>(null);
 
   const checkedIn = !!today?.check_in_time;
   const checkedOut = !!today?.check_out_time;
@@ -116,6 +129,79 @@ export function CheckInCard({ today }: { today: AttendanceRecord | null }) {
                 <input type="hidden" name="longitude" value={coords.longitude} />
               </>
             )}
+            {selfie && <input type="hidden" name="selfieUrl" value={selfie.url} />}
+
+            {!checkedIn && (
+              <div className="flex items-center gap-3">
+                {selfie ? (
+                  <div className="relative">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={selfie.url}
+                      alt="Check-in selfie"
+                      className="size-16 rounded-lg object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        const path = selfie.path;
+                        setSelfie(null);
+                        const supabase = createClient();
+                        await supabase.storage.from("attendance-selfies").remove([path]);
+                      }}
+                      aria-label="Remove selfie"
+                      className="absolute -right-1.5 -top-1.5 flex size-5 cursor-pointer items-center justify-center rounded-full bg-black/70 text-white"
+                    >
+                      <X className="size-3" aria-hidden />
+                    </button>
+                  </div>
+                ) : (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-11 flex-1"
+                    disabled={selfieUploading}
+                    onClick={() => selfieRef.current?.click()}
+                  >
+                    {selfieUploading ? (
+                      <Loader2 className="size-4 animate-spin" aria-hidden />
+                    ) : (
+                      <Camera className="size-4" aria-hidden />
+                    )}
+                    Add selfie (optional)
+                  </Button>
+                )}
+                <input
+                  ref={selfieRef}
+                  type="file"
+                  accept="image/*"
+                  capture="user"
+                  className="hidden"
+                  aria-label="Take a check-in selfie"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    setSelfieUploading(true);
+                    const supabase = createClient();
+                    const path = `${orgId}/${userId}/${new Date().toISOString().slice(0, 10)}-${crypto.randomUUID()}.jpg`;
+                    const { error } = await supabase.storage
+                      .from("attendance-selfies")
+                      .upload(path, file);
+                    if (error) {
+                      toast.error(`Selfie upload failed: ${error.message}`);
+                    } else {
+                      const { data } = await supabase.storage
+                        .from("attendance-selfies")
+                        .createSignedUrl(path, 60 * 60 * 24 * 365);
+                      setSelfie({ url: data?.signedUrl ?? path, path });
+                    }
+                    setSelfieUploading(false);
+                    if (selfieRef.current) selfieRef.current.value = "";
+                  }}
+                />
+              </div>
+            )}
+
             <Textarea
               name="notes"
               rows={2}

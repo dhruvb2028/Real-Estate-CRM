@@ -321,6 +321,105 @@ export async function sharePropertyWithLead(
   };
 }
 
+interface ImportRow {
+  fullName: string;
+  phone: string;
+  email?: string;
+  source?: string;
+  propertyType?: string;
+  budgetMin?: number;
+  budgetMax?: number;
+  preferredLocation?: string;
+  notes?: string;
+}
+
+/** Bulk CSV import — inserts rows and round-robin assigns unowned leads. */
+export async function importLeads(
+  rowsJson: string,
+  autoAssign: boolean
+): Promise<ActionState & { imported?: number; skipped?: number }> {
+  const profile = await requireProfile();
+  if (!["admin", "sales_manager"].includes(profile.role)) {
+    return { ok: false, error: "Only managers can bulk import leads" };
+  }
+
+  let rows: ImportRow[];
+  try {
+    rows = JSON.parse(rowsJson);
+  } catch {
+    return { ok: false, error: "Invalid import data" };
+  }
+  if (!Array.isArray(rows) || rows.length === 0) {
+    return { ok: false, error: "No rows to import" };
+  }
+  if (rows.length > 500) return { ok: false, error: "Max 500 rows per import" };
+
+  const { normalizeSource, normalizePropertyType } = await import("@/lib/validations");
+  const supabase = await createClient();
+
+  let imported = 0;
+  let skipped = 0;
+  const insertedIds: string[] = [];
+
+  for (const row of rows) {
+    const fullName = (row.fullName ?? "").trim();
+    const phone = (row.phone ?? "").trim();
+    if (fullName.length < 2 || phone.length < 7) {
+      skipped++;
+      continue;
+    }
+    const { data: lead, error } = await supabase
+      .from("leads")
+      .insert({
+        organization_id: profile.organization_id,
+        full_name: fullName.slice(0, 120),
+        phone: phone.slice(0, 20),
+        email: row.email?.trim() || null,
+        source: normalizeSource(row.source),
+        source_detail: row.source ?? null,
+        property_type: normalizePropertyType(row.propertyType),
+        budget_min: row.budgetMin || null,
+        budget_max: row.budgetMax || null,
+        preferred_location: row.preferredLocation?.trim().slice(0, 200) || null,
+        notes: row.notes?.trim().slice(0, 2000) || null,
+        created_by: profile.id,
+      })
+      .select("id")
+      .single();
+    if (error || !lead) {
+      skipped++;
+      continue;
+    }
+    insertedIds.push(lead.id);
+    imported++;
+  }
+
+  await supabase.from("activities").insert(
+    insertedIds.map((id) => ({
+      organization_id: profile.organization_id,
+      lead_id: id,
+      actor_id: profile.id,
+      type: "lead_created" as const,
+      title: "Lead imported",
+      description: `CSV import by ${profile.full_name}`,
+    }))
+  );
+
+  if (autoAssign) {
+    for (const id of insertedIds) {
+      await leadAssignmentService.assign(profile.organization_id!, id);
+    }
+  }
+
+  revalidatePath("/leads");
+  return {
+    ok: true,
+    imported,
+    skipped,
+    message: `Imported ${imported} lead(s)${skipped ? `, skipped ${skipped}` : ""}`,
+  };
+}
+
 export async function deleteLead(leadId: string): Promise<ActionState> {
   const profile = await requireProfile();
   if (!["admin", "sales_manager"].includes(profile.role)) {

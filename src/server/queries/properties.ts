@@ -44,15 +44,19 @@ export async function getProperties(
   return rows;
 }
 
-export async function getProperty(id: string): Promise<PropertyWithImages | null> {
+export interface PropertyDetail extends PropertyWithImages {
+  property_documents: import("@/lib/types").PropertyDocument[];
+}
+
+export async function getProperty(id: string): Promise<PropertyDetail | null> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("properties")
-    .select("*, property_images(*)")
+    .select("*, property_images(*), property_documents(*)")
     .eq("id", id)
     .maybeSingle();
   if (!data) return null;
-  const p = data as unknown as PropertyWithImages;
+  const p = data as unknown as PropertyDetail;
   p.property_images?.sort((a, b) =>
     a.is_cover === b.is_cover ? a.sort_order - b.sort_order : a.is_cover ? -1 : 1
   );

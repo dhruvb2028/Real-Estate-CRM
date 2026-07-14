@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
+  Bell,
+  ClipboardList,
   MapPin,
   Megaphone,
   UsersRound,
@@ -18,10 +20,22 @@ export const metadata: Metadata = { title: "More" };
 
 const sections = [
   {
+    href: "/tasks",
+    label: "Tasks & Site Visits",
+    description: "Assigned work and visit schedules",
+    icon: ClipboardList,
+  },
+  {
     href: "/attendance",
     label: "Attendance",
     description: "Check in/out and view history",
     icon: MapPin,
+  },
+  {
+    href: "/notifications",
+    label: "Notifications",
+    description: "Everything that needs your attention",
+    icon: Bell,
   },
   {
     href: "/social",

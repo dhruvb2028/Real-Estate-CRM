@@ -123,6 +123,14 @@ export function NotificationsBell({ userId }: { userId: string }) {
             </ul>
           )}
         </ScrollArea>
+        <div className="border-t border-border p-1.5">
+          <Link
+            href="/notifications"
+            className="block rounded-md px-3 py-2 text-center text-sm font-semibold text-primary transition-colors hover:bg-accent"
+          >
+            View all notifications
+          </Link>
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );

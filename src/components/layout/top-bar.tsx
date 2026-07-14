@@ -2,7 +2,9 @@ import Link from "next/link";
 import { LogOut, Settings, UserRound } from "lucide-react";
 import { logout } from "@/server/actions/auth";
 import { Logo } from "@/components/layout/logo";
+import { CommandMenu } from "@/components/layout/command-menu";
 import { NotificationsBell } from "@/components/layout/notifications-bell";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -25,6 +27,8 @@ export function TopBar({ profile }: { profile: Profile }) {
         <div className="hidden md:block" />
 
         <div className="flex items-center gap-1">
+          <CommandMenu />
+          <ThemeToggle />
           <NotificationsBell userId={profile.id} />
           <DropdownMenu>
             <DropdownMenuTrigger

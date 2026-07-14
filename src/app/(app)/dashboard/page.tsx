@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { formatDistanceToNow } from "date-fns";
 import {
   Building2,
   CalendarClock,
@@ -14,6 +13,7 @@ import {
 } from "lucide-react";
 import { requireProfile } from "@/lib/supabase/server";
 import { getDashboardStats, getRecentActivity } from "@/server/queries/dashboard";
+import { ActivityFeed } from "@/components/dashboard/activity-feed";
 import { Card } from "@/components/ui/card";
 import { ROLE_LABELS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
@@ -153,44 +153,8 @@ export default async function DashboardPage() {
         />
       </div>
 
-      {/* Recent activity */}
-      <Card className="gap-0 p-0">
-        <div className="border-b border-border px-4 py-3">
-          <p className="font-semibold">Recent activity</p>
-        </div>
-        {activity.length === 0 ? (
-          <p className="px-4 py-10 text-center text-sm text-muted-foreground">
-            Activity from calls, messages and lead updates will appear here.
-          </p>
-        ) : (
-          <ul className="divide-y divide-border">
-            {activity.map((a) => (
-              <li key={a.id}>
-                <Link
-                  href={a.lead_id ? `/leads/${a.lead_id}` : "#"}
-                  className="flex items-start gap-3 px-4 py-3 transition-colors hover:bg-accent"
-                >
-                  <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                    <ActivityIcon className="size-3.5 text-primary" aria-hidden />
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium">{a.title}</p>
-                    {a.description && (
-                      <p className="line-clamp-1 text-xs text-muted-foreground">
-                        {a.description}
-                      </p>
-                    )}
-                    <p className="mt-0.5 text-[11px] text-muted-foreground">
-                      {a.actor?.full_name ? `${a.actor.full_name} · ` : ""}
-                      {formatDistanceToNow(new Date(a.created_at), { addSuffix: true })}
-                    </p>
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Card>
+      {/* Recent activity (live) */}
+      <ActivityFeed initial={activity} />
     </div>
   );
 }
