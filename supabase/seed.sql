@@ -197,13 +197,13 @@ begin
     ) values
       (v_org, v_agent1, current_date - i,
        (current_date - i) + time '09:25', (current_date - i) + time '18:30',
-       28.4595, 77.0266, 28.4595, 77.0266, 'present', null),
+       28.4595, 77.0266, 28.4595, 77.0266, 'present'::attendance_status, null),
       (v_org, v_agent2, current_date - i,
        (current_date - i) + time '10:05', (current_date - i) + time '19:00',
-       28.4595, 77.0266, 28.4595, 77.0266, case when i % 2 = 0 then 'late' else 'present' end, null),
+       28.4595, 77.0266, 28.4595, 77.0266, (case when i % 2 = 0 then 'late' else 'present' end)::attendance_status, null),
       (v_org, v_field, current_date - i,
        (current_date - i) + time '09:15', (current_date - i) + time '17:45',
-       28.5355, 77.3910, 28.5355, 77.3910, 'present', 'Site visits in Noida')
+       28.5355, 77.3910, 28.5355, 77.3910, 'present'::attendance_status, 'Site visits in Noida')
     on conflict (user_id, work_date) do nothing;
   end loop;
 

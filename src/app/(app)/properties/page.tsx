@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Suspense } from "react";
 import { Building2, Plus } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
 import { PropertyCard } from "@/components/properties/property-card";
 import { PropertyFilters } from "@/components/properties/property-filters";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   getProperties,
   type PropertyFilters as Filters,
@@ -67,21 +65,8 @@ export default async function PropertiesPage({
         }
       />
       <div className="space-y-4">
-        <Suspense>
-          <PropertyFilters />
-        </Suspense>
-        <Suspense
-          key={JSON.stringify(filters)}
-          fallback={
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <Skeleton key={i} className="h-60 rounded-xl" />
-              ))}
-            </div>
-          }
-        >
-          <PropertyList filters={filters} />
-        </Suspense>
+        <PropertyFilters />
+        <PropertyList filters={filters} />
       </div>
     </>
   );

@@ -6,7 +6,39 @@ import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { cn } from "@/lib/utils"
 import { ChevronDownIcon, CheckIcon, ChevronUpIcon } from "lucide-react"
 
-const Select = SelectPrimitive.Root
+/**
+ * Recursively collect { value → label } from SelectItem children so
+ * SelectValue can display the selected item's label while the popup is
+ * closed (Base UI otherwise falls back to the raw value string).
+ */
+function collectItems(
+  children: React.ReactNode,
+  map: Record<string, React.ReactNode>
+) {
+  React.Children.forEach(children, (child) => {
+    if (!React.isValidElement(child)) return
+    const props = child.props as { value?: unknown; children?: React.ReactNode }
+    if (child.type === SelectItem && props.value !== undefined) {
+      map[String(props.value)] = props.children
+    } else if (props.children) {
+      collectItems(props.children, map)
+    }
+  })
+}
+
+function Select<Value = string>(props: SelectPrimitive.Root.Props<Value>) {
+  const items = React.useMemo(() => {
+    const map: Record<string, React.ReactNode> = {}
+    collectItems(props.children, map)
+    return Object.keys(map).length ? map : undefined
+  }, [props.children])
+  return (
+    <SelectPrimitive.Root
+      items={items as SelectPrimitive.Root.Props<Value>["items"]}
+      {...props}
+    />
+  )
+}
 
 function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
   return (

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Suspense } from "react";
 import {
   Download,
   FileSpreadsheet,
@@ -19,7 +18,6 @@ import { PageHeader } from "@/components/layout/page-header";
 import { LeadCard } from "@/components/leads/lead-card";
 import { LeadFilters } from "@/components/leads/lead-filters";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { getAgents, getLeads, type LeadFilters as Filters } from "@/server/queries/leads";
 
 export const metadata: Metadata = { title: "Leads" };
@@ -101,21 +99,8 @@ export default async function LeadsPage({
         }
       />
       <div className="space-y-4">
-        <Suspense>
-          <LeadFilters agents={agents} />
-        </Suspense>
-        <Suspense
-          key={JSON.stringify(filters)}
-          fallback={
-            <div className="grid gap-3 md:grid-cols-2">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <Skeleton key={i} className="h-40 rounded-xl" />
-              ))}
-            </div>
-          }
-        >
-          <LeadList filters={filters} />
-        </Suspense>
+        <LeadFilters agents={agents} />
+        <LeadList filters={filters} />
       </div>
     </>
   );
