@@ -7,7 +7,8 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-    "seed:users": "tsx scripts/seed-users.ts"
+    "seed:users": "tsx scripts/seed-users.ts",
+    "prod": "next build --turbopack && next start"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

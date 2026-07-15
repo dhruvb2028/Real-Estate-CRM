@@ -30,10 +30,10 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  // Refresh session — required for Server Components to see fresh tokens.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Validate the session locally (JWKS-verified JWT — no auth-server round
+  // trip). Expired tokens still refresh automatically.
+  const { data } = await supabase.auth.getClaims();
+  const user = data?.claims ? { id: data.claims.sub } : null;
 
   const { pathname } = request.nextUrl;
 
