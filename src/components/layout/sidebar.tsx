@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { motion, useReducedMotion } from "framer-motion";
 import {
   LayoutDashboard,
   Users,
@@ -33,17 +34,20 @@ const nav = [
   { href: "/settings", label: "Settings", icon: Settings, exact: true },
 ];
 
+/** Dark luxe sidebar — desktop only. */
 export function Sidebar({ role }: { role: UserRole }) {
   const pathname = usePathname();
+  const reduce = useReducedMotion();
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-border bg-sidebar md:flex">
+    <aside className="bg-luxe fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-white/8 md:flex">
       <div className="flex h-16 items-center px-5">
         <Link href="/dashboard" aria-label="EstateFlow home">
-          <Logo />
+          <Logo onDark />
         </Link>
       </div>
-      <nav aria-label="Primary" className="flex-1 space-y-0.5 overflow-y-auto px-3 py-2">
+
+      <nav aria-label="Primary" className="flex-1 space-y-0.5 overflow-y-auto px-3 py-3">
         {nav
           .filter((item) => {
             if (item.adminOnly && role !== "admin") return false;
@@ -60,19 +64,39 @@ export function Sidebar({ role }: { role: UserRole }) {
                 href={href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                  "relative flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13.5px] font-medium transition-colors duration-200",
                   active
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                    ? "text-[oklch(0.9_0.09_90)]"
+                    : "text-white/55 hover:bg-white/6 hover:text-white/90"
                 )}
               >
-                <Icon className="size-4.5" aria-hidden />
-                {label}
+                {active && (
+                  <motion.span
+                    layoutId="sidebar-active"
+                    className="absolute inset-0 rounded-xl bg-white/8 gold-ring"
+                    transition={
+                      reduce
+                        ? { duration: 0 }
+                        : { type: "spring", stiffness: 420, damping: 34 }
+                    }
+                  />
+                )}
+                <Icon
+                  className={cn("relative z-10 size-4.5", active && "text-gold")}
+                  aria-hidden
+                  strokeWidth={active ? 2.3 : 2}
+                />
+                <span className="relative z-10">{label}</span>
               </Link>
             );
           })}
       </nav>
-      <p className="px-5 pb-4 text-[11px] text-muted-foreground">EstateFlow CRM v1.0</p>
+
+      <div className="border-t border-white/8 px-5 py-4">
+        <p className="font-display text-[13px] italic text-white/40">
+          Close more deals, faster.
+        </p>
+      </div>
     </aside>
   );
 }

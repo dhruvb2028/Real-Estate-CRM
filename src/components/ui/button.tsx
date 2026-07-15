@@ -40,15 +40,23 @@ const buttonVariants = cva(
   }
 )
 
+import * as React from "react"
+
 function Button({
   className,
   variant = "default",
   size = "default",
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+  // When rendering as a non-button element (e.g. a Link), tell Base UI so it
+  // applies the correct semantics instead of warning.
+  const nativeButton =
+    props.render === undefined ||
+    (React.isValidElement(props.render) && props.render.type === "button")
   return (
     <ButtonPrimitive
       data-slot="button"
+      nativeButton={nativeButton}
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />

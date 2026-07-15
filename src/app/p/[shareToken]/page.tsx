@@ -103,12 +103,19 @@ export default async function PublicPropertyPage({
 
   return (
     <div className="min-h-dvh bg-background">
-      <header className="border-b border-border bg-card">
-        <div className="mx-auto flex max-w-3xl items-center gap-2 px-4 py-3.5">
-          <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Building2 className="size-4.5" aria-hidden />
+      <header className="bg-luxe">
+        <div className="mx-auto flex max-w-3xl items-center gap-2.5 px-4 py-4">
+          <div className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-[oklch(0.8_0.13_90)] to-[oklch(0.58_0.13_80)]">
+            <Building2 className="size-4.5 text-[oklch(0.2_0.02_60)]" aria-hidden />
           </div>
-          <p className="font-bold tracking-tight">{property.organization_name}</p>
+          <div>
+            <p className="font-display text-lg font-semibold tracking-tight text-white">
+              {property.organization_name}
+            </p>
+            <p className="text-[11px] uppercase tracking-[0.16em] text-gold">
+              Curated for you
+            </p>
+          </div>
         </div>
       </header>
 
@@ -118,15 +125,19 @@ export default async function PublicPropertyPage({
         <div>
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight">{property.title}</h1>
-              <p className="mt-1 flex items-center gap-1.5 text-muted-foreground">
+              <h1 className="font-display text-3xl font-semibold tracking-tight">
+                {property.title}
+              </h1>
+              <p className="mt-1.5 flex items-center gap-1.5 text-muted-foreground">
                 <MapPin className="size-4" aria-hidden />
                 {property.address ?? property.location}
               </p>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold text-primary">{formatPrice(property.price)}</p>
-              <p className="text-xs font-medium text-muted-foreground">
+              <p className="text-gold-gradient text-3xl font-bold tracking-tight">
+                {formatPrice(property.price)}
+              </p>
+              <p className="mt-0.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 {PROPERTY_TYPE_LABELS[property.property_type]} ·{" "}
                 {AVAILABILITY_LABELS[property.availability]}
               </p>
@@ -200,7 +211,7 @@ export default async function PublicPropertyPage({
           <div className="mx-auto max-w-3xl">
             <a
               href={`tel:${property.organization_phone}`}
-              className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary text-base font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+              className="flex h-13 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-b from-[oklch(0.78_0.13_90)] to-[oklch(0.64_0.14_82)] text-base font-bold text-[oklch(0.2_0.03_70)] shadow-[0_8px_24px_-6px_oklch(0.686_0.135_85/55%)] transition-all duration-200 hover:brightness-105 active:scale-[0.98]"
             >
               <Phone className="size-5" aria-hidden />
               Call {property.organization_name}

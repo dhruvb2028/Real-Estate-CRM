@@ -12,14 +12,16 @@ export function PageHeader({
   className?: string;
 }) {
   return (
-    <div className={cn("mb-4 flex items-start justify-between gap-3", className)}>
+    <div className={cn("mb-5 flex items-end justify-between gap-3", className)}>
       <div className="min-w-0">
-        <h1 className="text-xl font-bold tracking-tight md:text-2xl">{title}</h1>
+        <h1 className="font-display text-[26px] font-semibold leading-tight tracking-tight md:text-3xl">
+          {title}
+        </h1>
         {description && (
-          <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{description}</p>
         )}
       </div>
-      {action && <div className="shrink-0">{action}</div>}
+      {action && <div className="shrink-0 pb-0.5">{action}</div>}
     </div>
   );
 }

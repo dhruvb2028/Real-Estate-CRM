@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Bath, BedDouble, Building2, MapPin, Ruler } from "lucide-react";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   AVAILABILITY_COLORS,
@@ -11,59 +10,71 @@ import {
 import type { PropertyWithImages } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
+/** Image-first estate card with gradient overlay and gold price chip. */
 export function PropertyCard({ property }: { property: PropertyWithImages }) {
   const cover = property.property_images?.[0];
 
   return (
-    <Link href={`/properties/${property.id}`} className="block">
-      <Card className="gap-0 overflow-hidden p-0 transition-shadow hover:shadow-md">
-        <div className="relative h-40 bg-primary/5">
-          {cover ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={cover.url}
-              alt={property.title}
-              loading="lazy"
-              className="size-full object-cover"
-            />
-          ) : (
-            <div className="flex size-full items-center justify-center">
-              <Building2 className="size-10 text-primary/30" aria-hidden />
-            </div>
-          )}
+    <Link href={`/properties/${property.id}`} className="group block">
+      <article className="card-lift relative h-64 overflow-hidden rounded-2xl border border-border bg-card">
+        {/* Cover */}
+        {cover ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={cover.url}
+            alt={property.title}
+            loading="lazy"
+            className="absolute inset-0 size-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.05]"
+          />
+        ) : (
+          <div className="bg-luxe absolute inset-0 flex items-center justify-center">
+            <Building2 className="size-12 text-white/20" aria-hidden />
+          </div>
+        )}
+        {/* Legibility gradient */}
+        <div
+          className="absolute inset-0 bg-gradient-to-t from-[oklch(0.13_0.008_60/0.92)] via-[oklch(0.15_0.008_60/0.35)] to-transparent"
+          aria-hidden
+        />
+
+        {/* Top row */}
+        <div className="absolute inset-x-3 top-3 flex items-start justify-between">
           <Badge
             className={cn(
-              "absolute left-2.5 top-2.5 border-0 shadow-sm",
+              "border-0 shadow-md backdrop-blur",
               AVAILABILITY_COLORS[property.availability]
             )}
           >
             {AVAILABILITY_LABELS[property.availability]}
           </Badge>
+          <span className="rounded-full bg-white/12 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">
+            {PROPERTY_TYPE_LABELS[property.property_type]}
+          </span>
         </div>
 
-        <div className="space-y-1.5 p-3.5">
-          <div className="flex items-start justify-between gap-2">
-            <p className="truncate font-semibold">{property.title}</p>
-            <p className="shrink-0 font-bold text-primary">{formatPrice(property.price)}</p>
-          </div>
-          <p className="flex items-center gap-1 truncate text-xs text-muted-foreground">
+        {/* Bottom content */}
+        <div className="absolute inset-x-0 bottom-0 p-4">
+          <p className="text-gold-gradient text-xl font-bold tracking-tight">
+            {formatPrice(property.price)}
+          </p>
+          <h3 className="font-display mt-0.5 truncate text-lg font-semibold text-white">
+            {property.title}
+          </h3>
+          <p className="mt-0.5 flex items-center gap-1 truncate text-xs text-white/65">
             <MapPin className="size-3.5 shrink-0" aria-hidden />
             {property.location}
           </p>
-          <div className="flex items-center gap-3 pt-0.5 text-xs text-muted-foreground">
-            <span className="rounded bg-muted px-1.5 py-0.5 font-medium">
-              {PROPERTY_TYPE_LABELS[property.property_type]}
-            </span>
+          <div className="mt-2.5 flex items-center gap-3 text-[11.5px] font-medium text-white/75">
             {property.bedrooms != null && property.bedrooms > 0 && (
               <span className="flex items-center gap-1">
                 <BedDouble className="size-3.5" aria-hidden />
-                {property.bedrooms}
+                {property.bedrooms} Beds
               </span>
             )}
             {property.bathrooms != null && property.bathrooms > 0 && (
               <span className="flex items-center gap-1">
                 <Bath className="size-3.5" aria-hidden />
-                {property.bathrooms}
+                {property.bathrooms} Baths
               </span>
             )}
             {property.size_sqft && (
@@ -74,7 +85,7 @@ export function PropertyCard({ property }: { property: PropertyWithImages }) {
             )}
           </div>
         </div>
-      </Card>
+      </article>
     </Link>
   );
 }

@@ -31,12 +31,12 @@ export function LeadCard({ lead }: { lead: LeadWithAgent }) {
       onKeyDown={(e) => {
         if (e.key === "Enter") router.push(`/leads/${lead.id}`);
       }}
-      className="cursor-pointer gap-0 p-4 transition-shadow hover:shadow-md focus-visible:ring-2 focus-visible:ring-ring"
+      className="card-lift cursor-pointer gap-0 rounded-2xl p-4 focus-visible:ring-2 focus-visible:ring-ring"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
-          <Avatar className="size-10 shrink-0">
-            <AvatarFallback className="bg-primary/10 text-sm font-semibold text-primary">
+          <Avatar className="size-10 shrink-0 ring-2 ring-gold/25">
+            <AvatarFallback className="bg-gradient-to-br from-[oklch(0.3_0.01_56)] to-[oklch(0.22_0.008_56)] text-sm font-semibold text-[oklch(0.85_0.1_90)]">
               {initials(lead.full_name)}
             </AvatarFallback>
           </Avatar>
@@ -79,7 +79,7 @@ export function LeadCard({ lead }: { lead: LeadWithAgent }) {
       >
         <a
           href={`tel:${lead.phone}`}
-          className="flex h-10 items-center justify-center gap-1.5 rounded-lg bg-primary/10 text-sm font-semibold text-primary transition-colors hover:bg-primary/15"
+          className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-gold/12 text-sm font-semibold text-[oklch(0.55_0.12_80)] transition-all duration-200 hover:bg-gold/20 active:scale-95 dark:text-gold"
           aria-label={`Call ${lead.full_name}`}
         >
           <Phone className="size-4" aria-hidden /> Call
@@ -90,7 +90,7 @@ export function LeadCard({ lead }: { lead: LeadWithAgent }) {
           )}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex h-10 items-center justify-center gap-1.5 rounded-lg bg-emerald-500/10 text-sm font-semibold text-emerald-700 transition-colors hover:bg-emerald-500/20 dark:text-emerald-400"
+          className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-emerald-500/10 text-sm font-semibold text-emerald-700 transition-all duration-200 hover:bg-emerald-500/20 active:scale-95 dark:text-emerald-400"
           aria-label={`WhatsApp ${lead.full_name}`}
         >
           <MessageCircle className="size-4" aria-hidden /> WhatsApp
@@ -98,7 +98,7 @@ export function LeadCard({ lead }: { lead: LeadWithAgent }) {
         <Link
           href={`/leads/${lead.id}`}
           className={cn(
-            "flex h-10 items-center justify-center gap-1.5 rounded-lg text-sm font-semibold transition-colors",
+            "flex h-10 items-center justify-center gap-1.5 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-95",
             TEMPERATURE_COLORS[lead.temperature],
             "hover:opacity-85"
           )}
