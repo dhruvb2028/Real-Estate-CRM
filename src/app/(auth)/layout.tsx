@@ -1,5 +1,6 @@
 import { Logo } from "@/components/layout/logo";
 import { FadeIn } from "@/components/motion";
+import { brand } from "@/lib/brand";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -46,7 +47,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           </div>
           {children}
           <p className="mt-8 text-center font-display text-[13px] italic text-muted-foreground">
-            EstateFlow CRM — close more deals, faster.
+            {brand.name} — {brand.tagline}
           </p>
         </FadeIn>
       </div>

@@ -109,6 +109,9 @@ export type NotificationType =
 
 export type AssignmentMode = "round_robin" | "manual" | "least_busy";
 
+/** deep_link = open wa.me on the agent's device; api = send via Twilio. */
+export type WhatsappMode = "deep_link" | "api";
+
 export type InviteStatus = "pending" | "accepted" | "expired" | "revoked";
 
 export type TaskStatus = "pending" | "in_progress" | "completed" | "cancelled";
@@ -347,6 +350,7 @@ export interface IntegrationSettings extends BaseRow {
   social_webhook_url: string | null;
   default_assignment_mode: AssignmentMode;
   dry_run: boolean;
+  whatsapp_mode: WhatsappMode;
 }
 
 export interface AppNotification extends BaseRow {

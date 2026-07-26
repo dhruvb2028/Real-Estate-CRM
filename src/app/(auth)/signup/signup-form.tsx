@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SubmitButton } from "@/components/layout/submit-button";
 import { AlertCircle } from "lucide-react";
+import { brand } from "@/lib/brand";
 
 export function SignupForm() {
   const [state, formAction] = useActionState(signup, {});
@@ -17,7 +18,7 @@ export function SignupForm() {
       <CardHeader>
         <CardTitle className="text-xl">Create your workspace</CardTitle>
         <CardDescription>
-          Set up your real estate business on EstateFlow. You&apos;ll be the admin.
+          Set up your real estate business on {brand.shortName}. You&apos;ll be the admin.
         </CardDescription>
       </CardHeader>
       <CardContent>

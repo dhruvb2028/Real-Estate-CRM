@@ -2,6 +2,7 @@ import Link from "next/link";
 import { LogOut, Settings, UserRound } from "lucide-react";
 import { logout } from "@/server/actions/auth";
 import { Logo } from "@/components/layout/logo";
+import { brand } from "@/lib/brand";
 import { CommandMenu } from "@/components/layout/command-menu";
 import { NotificationsBell } from "@/components/layout/notifications-bell";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
@@ -21,7 +22,7 @@ export function TopBar({ profile }: { profile: Profile }) {
   return (
     <header className="pt-safe sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="px-safe flex h-14 items-center justify-between gap-2 md:h-16 md:px-6">
-        <Link href="/dashboard" className="-my-2 flex items-center py-2 md:hidden" aria-label="EstateFlow home">
+        <Link href="/dashboard" className="-my-2 flex items-center py-2 md:hidden" aria-label={`${brand.shortName} home`}>
           <Logo />
         </Link>
         <div className="hidden md:block" />

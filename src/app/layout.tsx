@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, Playfair_Display } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
+import { brand } from "@/lib/brand";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -19,11 +20,11 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: {
-    default: "EstateFlow CRM",
-    template: "%s · EstateFlow CRM",
+    default: brand.name,
+    template: `%s · ${brand.name}`,
   },
-  description:
-    "Mobile-first real estate CRM — instant lead calling, one-click property sharing, follow-ups, inventory, attendance and social planning.",
+  description: brand.description,
+  applicationName: brand.name,
 };
 
 export const viewport: Viewport = {

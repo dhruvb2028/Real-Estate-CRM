@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { after } from "next/server";
+import { timingSafeEqual } from "node:crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { clientIp, rateLimit } from "@/lib/security/rate-limit";
 import { leadAssignmentService } from "@/services/leadAssignmentService";
 import { callService } from "@/services/callService";
 import {
@@ -10,6 +12,17 @@ import {
 } from "@/lib/validations";
 
 export const dynamic = "force-dynamic";
+
+/** Generous enough for real portal bursts, tight enough to blunt abuse. */
+const RATE_LIMIT_PER_MINUTE = Number(process.env.LEAD_WEBHOOK_RATE_LIMIT ?? 60);
+
+/** Constant-time compare so the secret can't be discovered by timing. */
+function secretsMatch(a: string, b: string): boolean {
+  const bufA = Buffer.from(a);
+  const bufB = Buffer.from(b);
+  if (bufA.length !== bufB.length) return false;
+  return timingSafeEqual(bufA, bufB);
+}
 
 /**
  * POST /api/webhooks/leads
@@ -25,6 +38,26 @@ export const dynamic = "force-dynamic";
  * instant bridge call → logs activity → notifies the agent. Returns 201.
  */
 export async function POST(request: NextRequest) {
+  // Throttle by source IP so a discovered endpoint can't be used to flood the
+  // CRM with junk leads (each of which would also trigger a billable call).
+  const limit = rateLimit(`leads:${clientIp(request)}`, {
+    limit: RATE_LIMIT_PER_MINUTE,
+    windowMs: 60_000,
+  });
+  if (!limit.ok) {
+    return NextResponse.json(
+      { error: "Too many requests" },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(limit.retryAfterSeconds),
+          "X-RateLimit-Limit": String(RATE_LIMIT_PER_MINUTE),
+          "X-RateLimit-Remaining": "0",
+        },
+      }
+    );
+  }
+
   let payload: unknown;
   try {
     payload = await request.json();
@@ -60,7 +93,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Secret does not match organization" }, { status: 401 });
     }
     orgId = settingsRow.organization_id;
-  } else if (process.env.LEAD_WEBHOOK_SECRET && secret === process.env.LEAD_WEBHOOK_SECRET) {
+  } else if (
+    process.env.LEAD_WEBHOOK_SECRET &&
+    secretsMatch(secret, process.env.LEAD_WEBHOOK_SECRET)
+  ) {
     // Env-level secret (single-tenant/local dev): use header org or the only org.
     if (!orgId) {
       const { data: orgs } = await admin.from("organizations").select("id").limit(2);

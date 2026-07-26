@@ -14,7 +14,8 @@ import type {
   UserRole,
 } from "@/lib/types";
 
-export const APP_NAME = "EstateFlow CRM";
+// Brand name lives in lib/brand.ts (env-driven). Re-exported for convenience.
+export { brand } from "@/lib/brand";
 
 export const ROLE_LABELS: Record<UserRole, string> = {
   admin: "Admin",
@@ -219,17 +220,21 @@ export function renderTemplate(
 
 // ---------- Formatting ----------
 
-/** Indian currency, compact: ₹1.25 Cr / ₹75 L / ₹35,000 */
+/**
+ * Trims trailing zeros so prices read naturally: 1.20 → "1.2", 1.00 → "1".
+ * Buyers see these figures in shared listings, so they must look hand-written.
+ */
+function trimDecimals(value: number, maxDecimals: number): string {
+  return value
+    .toFixed(maxDecimals)
+    .replace(/\.?0+$/, "");
+}
+
+/** Indian currency, compact: ₹1.25 Cr / ₹1.2 Cr / ₹75 L / ₹35,000 */
 export function formatPrice(value: number | null | undefined): string {
   if (value === null || value === undefined) return "—";
-  if (value >= 10000000) {
-    const cr = value / 10000000;
-    return `₹${cr % 1 === 0 ? cr : cr.toFixed(2)} Cr`;
-  }
-  if (value >= 100000) {
-    const l = value / 100000;
-    return `₹${l % 1 === 0 ? l : l.toFixed(1)} L`;
-  }
+  if (value >= 10000000) return `₹${trimDecimals(value / 10000000, 2)} Cr`;
+  if (value >= 100000) return `₹${trimDecimals(value / 100000, 1)} L`;
   return `₹${value.toLocaleString("en-IN")}`;
 }
 

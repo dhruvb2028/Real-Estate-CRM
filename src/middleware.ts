@@ -1,7 +1,21 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/login", "/signup", "/invite", "/p/", "/api/webhooks", "/api/twilio"];
+/**
+ * Single-tenant deployments ship with public signup OFF: the admin account is
+ * created during provisioning and everyone else joins by invite. Set
+ * NEXT_PUBLIC_ALLOW_PUBLIC_SIGNUP=true only for a shared/demo instance.
+ */
+const ALLOW_PUBLIC_SIGNUP = process.env.NEXT_PUBLIC_ALLOW_PUBLIC_SIGNUP === "true";
+
+const PUBLIC_PATHS = [
+  "/login",
+  "/invite",
+  "/p/",
+  "/api/webhooks",
+  "/api/twilio",
+  ...(ALLOW_PUBLIC_SIGNUP ? ["/signup"] : []),
+];
 
 function isPublic(pathname: string): boolean {
   if (pathname === "/") return true;
@@ -50,6 +64,14 @@ export async function middleware(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("next", pathname);
+    return NextResponse.redirect(url);
+  }
+
+  // Signed-out visitors never reach a disabled signup page.
+  if (!ALLOW_PUBLIC_SIGNUP && pathname.startsWith("/signup")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    url.search = "";
     return NextResponse.redirect(url);
   }
 

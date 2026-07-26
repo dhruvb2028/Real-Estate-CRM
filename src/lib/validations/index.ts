@@ -191,5 +191,6 @@ export const integrationSettingsSchema = z.object({
   openaiBaseUrl: z.union([z.literal(""), z.string().trim().url()]).optional(),
   socialWebhookUrl: z.union([z.literal(""), z.string().trim().url()]).optional(),
   defaultAssignmentMode: z.enum(["round_robin", "manual", "least_busy"]),
+  whatsappMode: z.enum(["deep_link", "api"]).default("deep_link"),
   dryRun: z.coerce.boolean(),
 });

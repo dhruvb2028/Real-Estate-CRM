@@ -1,6 +1,7 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getResolvedConfig } from "@/services/config";
+import { waPhone } from "@/lib/constants";
 import type { MessageChannel, ServiceResult } from "@/lib/types";
 
 export interface SendMessageInput {
@@ -13,16 +14,40 @@ export interface SendMessageInput {
   templateKey?: string;
 }
 
+export interface SendMessageData {
+  messageId: string;
+  /**
+   * Present when WhatsApp is in deep-link mode: the client should open this URL
+   * so the agent's own WhatsApp composes the message.
+   */
+  deepLink?: string;
+}
+
 /**
- * WhatsApp / SMS adapter (Twilio).
- * Production: Twilio Messages API. Dry-run: logs a `messages` row with
- * status "simulated" so timelines and reports behave identically.
+ * WhatsApp / SMS adapter.
+ *
+ * WhatsApp has two delivery modes:
+ *  - deep_link (default): returns a wa.me URL the agent's device opens. Works
+ *    immediately with no Meta business verification, costs nothing, and the
+ *    lead sees a message from the agent's real number.
+ *  - api: sends automatically through Twilio. Requires a verified WhatsApp
+ *    sender; the client switches to this in Settings once approved.
+ *
+ * SMS always goes through Twilio. Both fall back to a logged simulation in
+ * dry-run mode so the whole flow is demonstrable without credentials.
  */
 export const messageService = {
-  async send(input: SendMessageInput): Promise<ServiceResult<{ messageId: string }>> {
+  async send(input: SendMessageInput): Promise<ServiceResult<SendMessageData>> {
     const admin = createAdminClient();
     const config = await getResolvedConfig(input.orgId);
-    const live = config.twilio.enabled && (input.channel !== "whatsapp" || !!config.twilio.whatsappNumber);
+
+    const useDeepLink =
+      input.channel === "whatsapp" && config.whatsappMode === "deep_link";
+
+    const live =
+      !useDeepLink &&
+      config.twilio.enabled &&
+      (input.channel !== "whatsapp" || !!config.twilio.whatsappNumber);
 
     // Persist first so a provider failure is still visible in the timeline.
     const { data: row, error: insErr } = await admin
@@ -35,12 +60,19 @@ export const messageService = {
         direction: "outbound",
         template_key: input.templateKey ?? null,
         body: input.body,
-        status: live ? "queued" : "simulated",
-        is_dry_run: !live,
+        // Deep-link messages are genuinely handed to the agent's WhatsApp, so
+        // they're recorded as sent rather than simulated.
+        status: useDeepLink ? "sent" : live ? "queued" : "simulated",
+        is_dry_run: !live && !useDeepLink,
       })
       .select("id")
       .single();
     if (insErr || !row) return { ok: false, error: insErr?.message ?? "insert failed" };
+
+    if (useDeepLink) {
+      const deepLink = `https://wa.me/${waPhone(input.to)}?text=${encodeURIComponent(input.body)}`;
+      return { ok: true, data: { messageId: row.id, deepLink } };
+    }
 
     if (!live) {
       console.log(

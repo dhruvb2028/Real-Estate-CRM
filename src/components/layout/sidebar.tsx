@@ -16,6 +16,7 @@ import {
   Settings,
 } from "lucide-react";
 import { Logo } from "@/components/layout/logo";
+import { brand } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 import type { UserRole } from "@/lib/types";
 
@@ -40,7 +41,7 @@ export function Sidebar({ role }: { role: UserRole }) {
   return (
     <aside className="bg-luxe fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-white/8 md:flex">
       <div className="flex h-16 items-center px-5">
-        <Link href="/dashboard" aria-label="EstateFlow home">
+        <Link href="/dashboard" aria-label={`${brand.shortName} home`}>
           <Logo onDark />
         </Link>
       </div>

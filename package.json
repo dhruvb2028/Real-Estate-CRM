@@ -7,8 +7,11 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-    "seed:users": "tsx scripts/seed-users.ts",
-    "prod": "next build --turbopack && next start"
+    "prod": "next build --turbopack && next start",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "provision": "tsx scripts/provision-client.ts",
+    "seed:demo": "tsx scripts/seed-users.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
@@ -46,6 +49,8 @@
     "eslint-config-next": "15.5.20",
     "tailwindcss": "^4",
     "tsx": "^4.23.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.10"
   }
 }

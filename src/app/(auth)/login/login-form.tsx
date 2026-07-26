@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { SubmitButton } from "@/components/layout/submit-button";
 import { AlertCircle } from "lucide-react";
 
+const ALLOW_PUBLIC_SIGNUP = process.env.NEXT_PUBLIC_ALLOW_PUBLIC_SIGNUP === "true";
+
 export function LoginForm({ next }: { next?: string }) {
   const [state, formAction] = useActionState(login, {});
 
@@ -65,12 +67,21 @@ export function LoginForm({ next }: { next?: string }) {
           <SubmitButton>Sign in</SubmitButton>
         </form>
 
-        <p className="mt-5 text-center text-sm text-muted-foreground">
-          New here?{" "}
-          <Link href="/signup" className="-my-3 inline-block px-1 py-3 font-semibold text-primary hover:underline">
-            Create your workspace
-          </Link>
-        </p>
+        {ALLOW_PUBLIC_SIGNUP ? (
+          <p className="mt-5 text-center text-sm text-muted-foreground">
+            New here?{" "}
+            <Link
+              href="/signup"
+              className="-my-3 inline-block px-1 py-3 font-semibold text-primary hover:underline"
+            >
+              Create your workspace
+            </Link>
+          </p>
+        ) : (
+          <p className="mt-5 text-center text-sm text-muted-foreground">
+            Need access? Ask your administrator to send you an invite.
+          </p>
+        )}
       </CardContent>
     </Card>
   );

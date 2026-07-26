@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { callService } from "@/services/callService";
+import { assertTwilioRequest } from "@/app/api/twilio/verify";
 
 export const dynamic = "force-dynamic";
 
 /**
  * Twilio status callback webhook.
  * POST /api/twilio/status?callId=...&leg=agent|lead|conference|recording
- * Progresses the `calls` row and drives agent-retry / call-pending fallback.
+ *
+ * Signature-verified, then progresses the `calls` row and drives the
+ * agent-retry / call-pending fallback.
  */
 export async function POST(request: NextRequest) {
   const params = request.nextUrl.searchParams;
@@ -14,8 +17,10 @@ export async function POST(request: NextRequest) {
   const leg = params.get("leg") ?? "agent";
   if (!callId) return NextResponse.json({ error: "callId required" }, { status: 400 });
 
-  const form = await request.formData().catch(() => null);
-  const get = (k: string) => (form?.get(k) as string | null) ?? undefined;
+  const verified = await assertTwilioRequest(request, callId);
+  if (!verified.ok) return verified.response;
+
+  const get = (k: string) => verified.params[k] || undefined;
 
   await callService.handleStatusCallback({
     callId,

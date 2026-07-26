@@ -1,6 +1,8 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
-import type { AssignmentMode, IntegrationSettings } from "@/lib/types";
+import { decryptSecret } from "@/lib/security/crypto";
+import { brand } from "@/lib/brand";
+import type { AssignmentMode, IntegrationSettings, WhatsappMode } from "@/lib/types";
 
 /**
  * Resolved integration configuration for one organization.
@@ -33,6 +35,17 @@ export interface ResolvedConfig {
   webhookSecret: string | null;
   socialWebhookUrl: string | null;
   assignmentMode: AssignmentMode;
+  /** deep_link works with no Meta verification; api needs a verified sender. */
+  whatsappMode: WhatsappMode;
+}
+
+/** Sender domain derived from the deployment URL, e.g. crm.client.com. */
+function emailDomain(): string {
+  try {
+    return new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000").hostname;
+  } catch {
+    return "localhost";
+  }
 }
 
 function envBool(v: string | undefined, fallback = false): boolean {
@@ -50,8 +63,11 @@ export async function getResolvedConfig(orgId: string): Promise<ResolvedConfig> 
 
   const s = (data as IntegrationSettings | null) ?? null;
 
-  const pick = (dbVal: string | null | undefined, envVal: string | undefined) =>
-    (dbVal && dbVal.trim()) || (envVal && envVal.trim()) || null;
+  // DB values are encrypted at rest; env vars are already plaintext.
+  const pick = (dbVal: string | null | undefined, envVal: string | undefined) => {
+    const decrypted = decryptSecret(dbVal);
+    return (decrypted && decrypted.trim()) || (envVal && envVal.trim()) || null;
+  };
 
   const twilioSid = pick(s?.twilio_account_sid, process.env.TWILIO_ACCOUNT_SID);
   const twilioToken = pick(s?.twilio_auth_token, process.env.TWILIO_AUTH_TOKEN);
@@ -75,7 +91,9 @@ export async function getResolvedConfig(orgId: string): Promise<ResolvedConfig> 
     },
     email: {
       resendApiKey: resendKey,
-      from: process.env.EMAIL_FROM || "EstateFlow CRM <noreply@estateflow.local>",
+      // Falls back to the client's own brand so outgoing mail is never
+      // attributed to the template's name.
+      from: process.env.EMAIL_FROM || `${brand.name} <noreply@${emailDomain()}>`,
       enabled: !forceDryRun && !!resendKey,
     },
     ai: {
@@ -90,5 +108,6 @@ export async function getResolvedConfig(orgId: string): Promise<ResolvedConfig> 
     webhookSecret: pick(s?.lead_webhook_secret, process.env.LEAD_WEBHOOK_SECRET),
     socialWebhookUrl: pick(s?.social_webhook_url, process.env.SOCIAL_WEBHOOK_URL),
     assignmentMode: s?.default_assignment_mode ?? "round_robin",
+    whatsappMode: s?.whatsapp_mode ?? "deep_link",
   };
 }

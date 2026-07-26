@@ -5,6 +5,7 @@ import { createClient, requireProfile } from "@/lib/supabase/server";
 import { emailService } from "@/services/emailService";
 import { inviteCreateSchema } from "@/lib/validations";
 import { ROLE_LABELS } from "@/lib/constants";
+import { brand } from "@/lib/brand";
 import type { ActionState, UserRole } from "@/lib/types";
 
 export async function inviteTeamMember(
@@ -50,7 +51,7 @@ export async function inviteTeamMember(
   await emailService.send({
     orgId: profile.organization_id!,
     to: parsed.data.email,
-    subject: `You're invited to join ${profile.full_name}'s team on EstateFlow CRM`,
+    subject: `You're invited to join ${profile.full_name}'s team on ${brand.name}`,
     body: `Hi,\n\nYou've been invited as ${ROLE_LABELS[parsed.data.role]}.\n\nAccept your invite: ${inviteUrl}\n\nThis link expires in 7 days.`,
   });
 
