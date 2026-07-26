@@ -45,7 +45,7 @@ export function InviteDialog() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button className="h-10" />}>
+      <DialogTrigger render={<Button className="h-11 md:h-10" />}>
         <UserPlus className="size-4" aria-hidden /> Invite
       </DialogTrigger>
       <DialogContent className="max-w-md">

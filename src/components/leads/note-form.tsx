@@ -30,7 +30,7 @@ export function NoteForm({ leadId }: { leadId: string }) {
         placeholder="Add a note about this lead…"
         aria-label="New note"
       />
-      <SubmitButton className="h-10 w-auto px-4 text-sm">
+      <SubmitButton className="h-11 w-auto px-4 text-sm md:h-10">
         <StickyNote className="size-4" aria-hidden /> Add note
       </SubmitButton>
     </form>

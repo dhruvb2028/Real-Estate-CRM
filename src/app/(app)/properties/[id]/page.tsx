@@ -68,7 +68,7 @@ export default async function PropertyDetailPage({
         title={property.title}
         description={property.location}
         action={
-          <Button variant="outline" render={<Link href={`/properties/${property.id}/edit`} />} className="h-10">
+          <Button variant="outline" render={<Link href={`/properties/${property.id}/edit`} />} className="h-11 md:h-10">
             <Pencil className="size-4" aria-hidden /> Edit
           </Button>
         }

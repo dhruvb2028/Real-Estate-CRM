@@ -96,7 +96,7 @@ export function TaskCard({ task }: { task: TaskWithRelations }) {
       {task.status !== "completed" && (
         <div className="mt-3">
           <Drawer open={open} onOpenChange={setOpen}>
-            <DrawerTrigger render={<Button size="sm" className="h-9 w-full" />}>
+            <DrawerTrigger render={<Button size="sm" className="h-11 w-full md:h-9" />}>
               <Check className="size-4" aria-hidden /> Mark complete
             </DrawerTrigger>
             <DrawerContent>

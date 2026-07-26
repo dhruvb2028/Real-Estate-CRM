@@ -59,7 +59,7 @@ export default async function PropertiesPage({
       <PageHeader
         title="Properties"
         action={
-          <Button render={<Link href="/properties/new" />} className="h-10">
+          <Button render={<Link href="/properties/new" />} className="h-11 md:h-10">
             <Plus className="size-4" aria-hidden /> Add property
           </Button>
         }

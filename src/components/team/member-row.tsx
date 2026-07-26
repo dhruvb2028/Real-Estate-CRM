@@ -29,7 +29,7 @@ export function MemberRow({
 
   return (
     <li className="flex items-center gap-3 py-3">
-      <Avatar className="size-10">
+      <Avatar className="size-11 md:size-10">
         <AvatarFallback className="bg-primary/10 text-sm font-semibold text-primary">
           {initials(member.full_name || member.email)}
         </AvatarFallback>
@@ -69,7 +69,7 @@ export function MemberRow({
             }
           >
             <SelectTrigger
-              className="h-9 w-auto text-xs"
+              className="h-11 w-auto text-xs md:h-9"
               aria-label={`Role for ${member.full_name}`}
             >
               <SelectValue />

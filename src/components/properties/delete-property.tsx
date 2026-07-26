@@ -30,7 +30,7 @@ export function DeleteProperty({
     <AlertDialog>
       <AlertDialogTrigger
         render={
-          <Button variant="destructive" className="h-10" aria-label={`Delete ${title}`} />
+          <Button variant="destructive" className="h-11 md:h-10" aria-label={`Delete ${title}`} />
         }
       >
         <Trash2 className="size-4" aria-hidden /> Delete

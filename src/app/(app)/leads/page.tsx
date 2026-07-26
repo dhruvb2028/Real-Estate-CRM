@@ -72,13 +72,13 @@ export default async function LeadsPage({
         title="Leads"
         action={
           <div className="flex gap-2">
-            <Button variant="outline" size="icon" render={<Link href="/leads/board" aria-label="Pipeline board view" />} className="size-10">
+            <Button variant="outline" size="icon" render={<Link href="/leads/board" aria-label="Pipeline board view" />} className="size-11 md:size-10">
               <Kanban className="size-4" aria-hidden />
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger
                 render={
-                  <Button variant="outline" size="icon" className="size-10" aria-label="Import or export leads" />
+                  <Button variant="outline" size="icon" className="size-11 md:size-10" aria-label="Import or export leads" />
                 }
               >
                 <FileSpreadsheet className="size-4" aria-hidden />
@@ -92,7 +92,7 @@ export default async function LeadsPage({
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button render={<Link href="/leads/new" />} className="h-10">
+            <Button render={<Link href="/leads/new" />} className="h-11 md:h-10">
               <Plus className="size-4" aria-hidden /> Add lead
             </Button>
           </div>

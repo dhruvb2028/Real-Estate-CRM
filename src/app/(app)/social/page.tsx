@@ -40,7 +40,7 @@ export default async function SocialPage() {
         title="Social Media"
         description="Plan, draft and schedule content"
         action={
-          <Button render={<Link href="/social/new" />} className="h-10">
+          <Button render={<Link href="/social/new" />} className="h-11 md:h-10">
             <Plus className="size-4" aria-hidden /> New post
           </Button>
         }

@@ -174,7 +174,7 @@ export function LeadFilters({
         <button
           onClick={() => setParam("status", null)}
           className={cn(
-            "h-9 shrink-0 snap-start cursor-pointer rounded-full border px-4 text-[13px] font-semibold transition-colors",
+            "h-11 shrink-0 snap-start cursor-pointer rounded-full border px-4 md:h-9 text-[13px] font-semibold transition-colors",
             !activeStatus
               ? "border-transparent bg-primary text-primary-foreground"
               : "border-border bg-card text-muted-foreground"
@@ -187,7 +187,7 @@ export function LeadFilters({
             key={s}
             onClick={() => setParam("status", activeStatus === s ? null : s)}
             className={cn(
-              "h-9 shrink-0 snap-start cursor-pointer whitespace-nowrap rounded-full border px-4 text-[13px] font-semibold transition-colors",
+              "h-11 shrink-0 snap-start cursor-pointer whitespace-nowrap rounded-full border px-4 md:h-9 text-[13px] font-semibold transition-colors",
               activeStatus === s
                 ? "border-transparent bg-primary text-primary-foreground"
                 : "border-border bg-card text-muted-foreground"

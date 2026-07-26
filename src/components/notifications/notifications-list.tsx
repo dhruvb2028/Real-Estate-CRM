@@ -92,7 +92,7 @@ export function NotificationsList({
           </TabsList>
         </Tabs>
         {unreadCount > 0 && (
-          <Button variant="ghost" size="sm" className="h-9 gap-1.5" onClick={markAllRead}>
+          <Button variant="ghost" size="sm" className="h-11 gap-1.5 md:h-9" onClick={markAllRead}>
             <CheckCheck className="size-4" aria-hidden /> Mark all read
           </Button>
         )}

@@ -79,7 +79,7 @@ export function LeadCard({ lead }: { lead: LeadWithAgent }) {
       >
         <a
           href={`tel:${lead.phone}`}
-          className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-gold/12 text-sm font-semibold text-[oklch(0.55_0.12_80)] transition-all duration-200 hover:bg-gold/20 active:scale-95 dark:text-gold"
+          className="flex h-11 items-center justify-center gap-1.5 rounded-xl bg-gold/12 text-sm font-semibold text-[oklch(0.55_0.12_80)] transition-all duration-200 hover:bg-gold/20 active:scale-95 dark:text-gold"
           aria-label={`Call ${lead.full_name}`}
         >
           <Phone className="size-4" aria-hidden /> Call
@@ -90,7 +90,7 @@ export function LeadCard({ lead }: { lead: LeadWithAgent }) {
           )}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-emerald-500/10 text-sm font-semibold text-emerald-700 transition-all duration-200 hover:bg-emerald-500/20 active:scale-95 dark:text-emerald-400"
+          className="flex h-11 items-center justify-center gap-1.5 rounded-xl bg-emerald-500/10 text-sm font-semibold text-emerald-700 transition-all duration-200 hover:bg-emerald-500/20 active:scale-95 dark:text-emerald-400"
           aria-label={`WhatsApp ${lead.full_name}`}
         >
           <MessageCircle className="size-4" aria-hidden /> WhatsApp
@@ -98,7 +98,7 @@ export function LeadCard({ lead }: { lead: LeadWithAgent }) {
         <Link
           href={`/leads/${lead.id}`}
           className={cn(
-            "flex h-10 items-center justify-center gap-1.5 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-95",
+            "flex h-11 items-center justify-center gap-1.5 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-95",
             TEMPERATURE_COLORS[lead.temperature],
             "hover:opacity-85"
           )}

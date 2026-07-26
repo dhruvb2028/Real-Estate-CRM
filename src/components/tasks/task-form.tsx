@@ -47,7 +47,7 @@ export function TaskFormDrawer({ members, leads }: TaskFormProps) {
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger render={<Button className="h-10" />}>
+      <DrawerTrigger render={<Button className="h-11 md:h-10" />}>
         <Plus className="size-4" aria-hidden /> New task
       </DrawerTrigger>
       <DrawerContent>

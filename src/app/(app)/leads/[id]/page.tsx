@@ -59,13 +59,13 @@ export default async function LeadDetailPage({
     <div className="mx-auto max-w-2xl space-y-4 pb-24 md:pb-0">
       {/* Header */}
       <div className="flex items-start gap-3">
-        <Avatar className="size-14">
-          <AvatarFallback className="bg-primary/10 text-lg font-bold text-primary">
+        <Avatar className="size-14 ring-2 ring-gold/25">
+          <AvatarFallback className="bg-gradient-to-br from-[oklch(0.3_0.01_56)] to-[oklch(0.22_0.008_56)] text-lg font-bold text-[oklch(0.85_0.1_90)]">
             {initials(lead.full_name)}
           </AvatarFallback>
         </Avatar>
         <div className="min-w-0 flex-1">
-          <h1 className="truncate text-xl font-bold tracking-tight">{lead.full_name}</h1>
+          <h1 className="font-display truncate text-2xl font-semibold tracking-tight">{lead.full_name}</h1>
           <p className="text-sm text-muted-foreground">
             {LEAD_SOURCE_LABELS[lead.source]} · Added{" "}
             {format(new Date(lead.created_at), "d MMM yyyy")}
@@ -102,14 +102,14 @@ export default async function LeadDetailPage({
         <CardContent className="grid gap-2.5 text-sm">
           <a
             href={`tel:${lead.phone}`}
-            className="flex items-center gap-2.5 font-medium text-primary"
+            className="-mx-2 flex min-h-11 items-center gap-2.5 rounded-lg px-2 font-medium text-primary transition-colors active:bg-accent"
           >
             <Phone className="size-4 shrink-0" aria-hidden /> {lead.phone}
           </a>
           {lead.email && (
             <a
               href={`mailto:${lead.email}`}
-              className="flex items-center gap-2.5 text-foreground"
+              className="-mx-2 flex min-h-11 items-center gap-2.5 rounded-lg px-2 text-foreground transition-colors active:bg-accent"
             >
               <Mail className="size-4 shrink-0 text-muted-foreground" aria-hidden />
               {lead.email}
@@ -119,7 +119,7 @@ export default async function LeadDetailPage({
             href={`https://wa.me/${waPhone(lead.phone)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2.5 text-emerald-700 dark:text-emerald-400"
+            className="-mx-2 flex min-h-11 items-center gap-2.5 rounded-lg px-2 text-emerald-700 transition-colors active:bg-accent dark:text-emerald-400"
           >
             <MessageCircle className="size-4 shrink-0" aria-hidden /> Open WhatsApp chat
           </a>

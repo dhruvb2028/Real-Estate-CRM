@@ -118,7 +118,7 @@ export default async function DashboardPage() {
                 key={href}
                 href={href}
                 className={cn(
-                  "flex h-10.5 shrink-0 items-center gap-2 rounded-full px-4.5 text-sm font-semibold transition-all duration-200 active:scale-95",
+                  "flex h-11 shrink-0 items-center gap-2 rounded-full px-4.5 text-sm font-semibold transition-all duration-200 active:scale-95",
                   primary
                     ? "bg-gradient-to-b from-[oklch(0.78_0.13_90)] to-[oklch(0.64_0.14_82)] text-[oklch(0.2_0.03_70)] shadow-[0_6px_18px_-6px_oklch(0.686_0.135_85/60%)] hover:brightness-105"
                     : "border border-white/15 bg-white/6 text-white/85 backdrop-blur hover:bg-white/12"

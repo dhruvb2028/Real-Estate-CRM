@@ -11,7 +11,7 @@ export function ThemeToggle() {
   useEffect(() => setMounted(true), []);
 
   if (!mounted) {
-    return <Button variant="ghost" size="icon" className="size-10" aria-hidden />;
+    return <Button variant="ghost" size="icon" className="size-11 md:size-10" aria-hidden />;
   }
 
   const dark = resolvedTheme === "dark";
@@ -19,7 +19,7 @@ export function ThemeToggle() {
     <Button
       variant="ghost"
       size="icon"
-      className="size-10"
+      className="size-11 md:size-10"
       aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
       onClick={() => setTheme(dark ? "light" : "dark")}
     >

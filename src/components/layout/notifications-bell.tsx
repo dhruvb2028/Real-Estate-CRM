@@ -68,7 +68,7 @@ export function NotificationsBell({ userId }: { userId: string }) {
           <Button
             variant="ghost"
             size="icon"
-            className="relative size-10"
+            className="relative size-11 md:size-10"
             aria-label={`Notifications${unread ? ` (${unread} unread)` : ""}`}
           />
         }

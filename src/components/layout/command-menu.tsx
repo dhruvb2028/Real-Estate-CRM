@@ -111,7 +111,7 @@ export function CommandMenu() {
       <Button
         variant="ghost"
         size="icon"
-        className="size-10"
+        className="size-11 md:size-10"
         aria-label="Search (Ctrl+K)"
         onClick={() => setOpen(true)}
       >

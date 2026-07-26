@@ -19,10 +19,10 @@ export default async function LeadBoardPage() {
         description="Move leads through your sales stages"
         action={
           <div className="flex gap-2">
-            <Button variant="outline" render={<Link href="/leads" />} className="h-10">
+            <Button variant="outline" render={<Link href="/leads" />} className="h-11 md:h-10">
               <List className="size-4" aria-hidden /> List
             </Button>
-            <Button render={<Link href="/leads/new" />} className="h-10">
+            <Button render={<Link href="/leads/new" />} className="h-11 md:h-10">
               <Plus className="size-4" aria-hidden /> Add
             </Button>
           </div>

@@ -94,7 +94,7 @@ export function PostCard({ post }: { post: SocialPost }) {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="size-8"
+                  className="size-11 md:size-8"
                   aria-label={`Actions for ${post.title}`}
                 />
               }

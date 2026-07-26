@@ -83,7 +83,7 @@ export function StatusControls({
         <Button
           variant="outline"
           disabled={pending}
-          className={cn("h-10 gap-1.5 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-900 dark:hover:bg-red-950")}
+          className={cn("h-11 gap-1.5 border-red-200 md:h-10 text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-900 dark:hover:bg-red-950")}
           onClick={() =>
             startTransition(async () => {
               const r = await updateLeadTemperature(lead.id, "hot");

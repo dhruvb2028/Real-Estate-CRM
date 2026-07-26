@@ -21,7 +21,7 @@ export function TopBar({ profile }: { profile: Profile }) {
   return (
     <header className="pt-safe sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="px-safe flex h-14 items-center justify-between gap-2 md:h-16 md:px-6">
-        <Link href="/dashboard" className="md:hidden" aria-label="EstateFlow home">
+        <Link href="/dashboard" className="-my-2 flex items-center py-2 md:hidden" aria-label="EstateFlow home">
           <Logo />
         </Link>
         <div className="hidden md:block" />
@@ -32,7 +32,7 @@ export function TopBar({ profile }: { profile: Profile }) {
           <NotificationsBell userId={profile.id} />
           <DropdownMenu>
             <DropdownMenuTrigger
-              className="rounded-full outline-none ring-ring focus-visible:ring-2"
+              className="flex size-11 items-center justify-center rounded-full outline-none ring-ring focus-visible:ring-2 md:size-10"
               aria-label="Account menu"
             >
               <Avatar className="size-9">

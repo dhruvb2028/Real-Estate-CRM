@@ -47,7 +47,7 @@ export function FollowupCard({
       <div className="flex items-start justify-between gap-2">
         <Link
           href={lead ? `/leads/${lead.id}` : "#"}
-          className="group min-w-0 flex-1"
+          className="group -my-1 min-w-0 flex-1 py-1"
           aria-label={lead ? `Open lead ${lead.full_name}` : undefined}
         >
           <p className="flex items-center gap-1.5 font-semibold group-hover:text-primary">
@@ -82,7 +82,7 @@ export function FollowupCard({
           <Button
             size="sm"
             disabled={pending}
-            className="h-9 flex-1"
+            className="h-11 flex-1 md:h-9"
             onClick={() =>
               startTransition(async () => {
                 const r = await completeFollowup(followup.id);
@@ -102,7 +102,7 @@ export function FollowupCard({
           <DropdownMenu>
             <DropdownMenuTrigger
               render={
-                <Button variant="outline" size="sm" disabled={pending} className="h-9 flex-1" />
+                <Button variant="outline" size="sm" disabled={pending} className="h-11 flex-1 md:h-9" />
               }
             >
               <AlarmClock className="size-4" aria-hidden /> Snooze

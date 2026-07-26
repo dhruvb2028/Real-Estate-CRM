@@ -20,7 +20,7 @@ export function RevokeInviteButton({
       variant="ghost"
       size="icon"
       disabled={pending}
-      className="size-8 text-muted-foreground hover:text-destructive"
+      className="size-11 text-muted-foreground hover:text-destructive md:size-8"
       aria-label={`Revoke invite for ${email}`}
       onClick={() =>
         startTransition(async () => {
