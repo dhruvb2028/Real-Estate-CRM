@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Bath, BedDouble, Building2, MapPin, Ruler } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -11,7 +12,14 @@ import type { PropertyWithImages } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 /** Image-first estate card with gradient overlay and gold price chip. */
-export function PropertyCard({ property }: { property: PropertyWithImages }) {
+export function PropertyCard({
+  property,
+  priority = false,
+}: {
+  property: PropertyWithImages;
+  /** Set on the first card or two so the hero image isn't lazy-loaded. */
+  priority?: boolean;
+}) {
   const cover = property.property_images?.[0];
 
   return (
@@ -19,12 +27,13 @@ export function PropertyCard({ property }: { property: PropertyWithImages }) {
       <article className="card-lift relative h-64 overflow-hidden rounded-2xl border border-border bg-card">
         {/* Cover */}
         {cover ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={cover.url}
             alt={property.title}
-            loading="lazy"
-            className="absolute inset-0 size-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.05]"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            priority={priority}
+            className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.05]"
           />
         ) : (
           <div className="bg-luxe absolute inset-0 flex items-center justify-center">

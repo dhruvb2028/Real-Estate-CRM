@@ -19,8 +19,8 @@ import type { Profile } from "@/lib/types";
 
 export function TopBar({ profile }: { profile: Profile }) {
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/85">
-      <div className="flex h-14 items-center justify-between gap-2 px-4 md:h-16 md:px-6">
+    <header className="pt-safe sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <div className="px-safe flex h-14 items-center justify-between gap-2 md:h-16 md:px-6">
         <Link href="/dashboard" className="md:hidden" aria-label="EstateFlow home">
           <Logo />
         </Link>

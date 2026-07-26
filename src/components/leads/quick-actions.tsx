@@ -65,7 +65,8 @@ export function QuickActions({ lead, properties }: QuickActionsProps) {
   }
 
   return (
-    <div className="fixed inset-x-0 bottom-14 z-40 border-t border-border bg-card/95 px-4 py-2.5 backdrop-blur supports-[backdrop-filter]:bg-card/85 md:sticky md:bottom-auto md:top-16 md:z-30 md:rounded-xl md:border md:bg-card md:shadow-sm pb-safe md:pb-2.5">
+    // bottom-[…] sits above the floating nav (pill + gap + home indicator)
+    <div className="fixed inset-x-0 bottom-[calc(5.25rem+env(safe-area-inset-bottom,0px))] z-40 border-t border-border bg-card/95 px-4 py-2.5 backdrop-blur supports-[backdrop-filter]:bg-card/85 md:sticky md:inset-x-auto md:bottom-auto md:top-16 md:z-30 md:rounded-2xl md:border md:bg-card md:shadow-sm md:pb-2.5">
       <div className="mx-auto grid max-w-2xl grid-cols-4 gap-2">
         <Button
           onClick={onBridgeCall}

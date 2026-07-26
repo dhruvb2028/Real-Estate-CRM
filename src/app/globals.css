@@ -134,10 +134,43 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Stop rubber-band scroll chaining into the page behind sheets/drawers */
+    overscroll-behavior-y: none;
   }
   html {
     @apply font-sans;
     -webkit-tap-highlight-color: transparent;
+    /* Never let mobile browsers inflate our type */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    /* Smooth momentum scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+  /* iOS zooms any focused control under 16px — force 16px on touch devices */
+  @media (max-width: 767px) {
+    input,
+    select,
+    textarea {
+      font-size: 16px !important;
+    }
+  }
+  /* Tap feedback for anything interactive on touch devices */
+  @media (hover: none) {
+    a:active,
+    button:active,
+    [role="button"]:active,
+    [role="link"]:active {
+      opacity: 0.75;
+      transition: opacity 60ms ease;
+    }
+  }
+  /* Images never break the mobile viewport */
+  img,
+  svg,
+  video {
+    max-width: 100%;
+    height: auto;
   }
 }
 
@@ -152,6 +185,70 @@
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+
+  /* ---- Motion primitives (compositor-only, no JS animation lib) ---- */
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 14px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .animate-rise-in {
+    animation: rise-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  /* Children rise one after another — cadence lives here, not in JS */
+  .stagger-children > * {
+    animation: rise-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .stagger-children > *:nth-child(1) { animation-delay: 0.02s; }
+  .stagger-children > *:nth-child(2) { animation-delay: 0.07s; }
+  .stagger-children > *:nth-child(3) { animation-delay: 0.12s; }
+  .stagger-children > *:nth-child(4) { animation-delay: 0.17s; }
+  .stagger-children > *:nth-child(5) { animation-delay: 0.22s; }
+  .stagger-children > *:nth-child(6) { animation-delay: 0.27s; }
+  .stagger-children > *:nth-child(7) { animation-delay: 0.32s; }
+  .stagger-children > *:nth-child(n + 8) { animation-delay: 0.36s; }
+  .press-scale {
+    transition: transform 140ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .press-scale:active {
+    transform: scale(0.97);
+  }
+
+  /* ---- Mobile helpers ---- */
+  /* Horizontal scrollers that snap and respect safe areas */
+  .snap-x-mandatory {
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  .snap-start {
+    scroll-snap-align: start;
+  }
+  /* Left/right safe-area padding for edge-to-edge scrollers on notched phones */
+  .px-safe {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  /* Guarantees a 44px hit area without changing visual size */
+  .tap-target {
+    position: relative;
+  }
+  .tap-target::after {
+    content: "";
+    position: absolute;
+    inset: 50% 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
   }
 
   /* ---- Luxe helpers ---- */

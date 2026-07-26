@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion, useReducedMotion } from "framer-motion";
 import {
   LayoutDashboard,
   Users,
@@ -37,7 +36,6 @@ const nav = [
 /** Dark luxe sidebar — desktop only. */
 export function Sidebar({ role }: { role: UserRole }) {
   const pathname = usePathname();
-  const reduce = useReducedMotion();
 
   return (
     <aside className="bg-luxe fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-white/8 md:flex">
@@ -71,14 +69,9 @@ export function Sidebar({ role }: { role: UserRole }) {
                 )}
               >
                 {active && (
-                  <motion.span
-                    layoutId="sidebar-active"
-                    className="absolute inset-0 rounded-xl bg-white/8 gold-ring"
-                    transition={
-                      reduce
-                        ? { duration: 0 }
-                        : { type: "spring", stiffness: 420, damping: 34 }
-                    }
+                  <span
+                    aria-hidden
+                    className="gold-ring absolute inset-0 rounded-xl bg-white/8"
                   />
                 )}
                 <Icon

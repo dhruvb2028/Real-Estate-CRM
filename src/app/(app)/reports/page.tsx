@@ -4,7 +4,7 @@ import { CalendarCheck2, Share2, Trophy } from "lucide-react";
 import { requireProfile } from "@/lib/supabase/server";
 import { getReportsData } from "@/server/queries/reports";
 import { PageHeader } from "@/components/layout/page-header";
-import { CategoryBars, Donut } from "@/components/reports/charts";
+import { CategoryBars, Donut } from "@/components/reports/lazy-charts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -114,10 +114,44 @@ export default async function ReportsPage() {
         <CardHeader className="pb-1">
           <CardTitle className="text-base">Agent call performance (30 days)</CardTitle>
         </CardHeader>
-        <CardContent className="overflow-x-auto">
+        <CardContent>
           {data.agentPerformance.length === 0 ? (
             <p className="py-8 text-center text-sm text-muted-foreground">No agents yet.</p>
           ) : (
+            <>
+            {/* Mobile: stat cards — a 6-column table is unreadable at 375px */}
+            <ul className="space-y-2.5 md:hidden">
+              {data.agentPerformance.map((a) => (
+                <li key={a.agent} className="rounded-xl border border-border p-3.5">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <p className="truncate font-semibold">{a.agent}</p>
+                    <p className="shrink-0 text-xs font-medium text-muted-foreground">
+                      {a.calls} calls
+                    </p>
+                  </div>
+                  <dl className="mt-2.5 grid grid-cols-4 gap-2 text-center">
+                    {[
+                      { k: "Connected", v: a.connected },
+                      {
+                        k: "Avg",
+                        v: a.avgDurationSec
+                          ? `${Math.floor(a.avgDurationSec / 60)}m ${a.avgDurationSec % 60}s`
+                          : "—",
+                      },
+                      { k: "Follow-ups", v: a.followupsCompleted },
+                      { k: "Won", v: a.leadsWon },
+                    ].map(({ k, v }) => (
+                      <div key={k} className="rounded-lg bg-muted py-1.5">
+                        <dd className="text-sm font-bold tabular-nums">{v}</dd>
+                        <dt className="text-[10px] font-medium text-muted-foreground">{k}</dt>
+                      </div>
+                    ))}
+                  </dl>
+                </li>
+              ))}
+            </ul>
+
+            <div className="hidden overflow-x-auto md:block">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -146,6 +180,8 @@ export default async function ReportsPage() {
                 ))}
               </TableBody>
             </Table>
+            </div>
+            </>
           )}
         </CardContent>
       </Card>

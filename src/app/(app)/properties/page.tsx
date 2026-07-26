@@ -33,8 +33,8 @@ async function PropertyList({ filters }: { filters: Filters }) {
 
   return (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-      {properties.map((p) => (
-        <PropertyCard key={p.id} property={p} />
+      {properties.map((p, i) => (
+        <PropertyCard key={p.id} property={p} priority={i < 2} />
       ))}
     </div>
   );

@@ -1,10 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useInView, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-const EASE = [0.22, 1, 0.36, 1] as const;
+/**
+ * CSS-driven motion primitives.
+ *
+ * These deliberately avoid framer-motion so it stays out of the shared bundle
+ * (~50 kB gzipped) — it is only loaded on the pipeline board, where real
+ * layout animation is worth the weight. Everything here is compositor-only
+ * (transform/opacity) and honours prefers-reduced-motion via globals.css.
+ */
 
 /** Fade + rise entrance for a single block. */
 export function FadeIn({
@@ -16,43 +22,30 @@ export function FadeIn({
   delay?: number;
   className?: string;
 }) {
-  const reduce = useReducedMotion();
   return (
-    <motion.div
-      className={className}
-      initial={reduce ? false : { opacity: 0, y: 14 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay, ease: EASE }}
+    <div
+      className={cn("animate-rise-in", className)}
+      style={delay ? { animationDelay: `${delay}s` } : undefined}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
 
-/** Staggered entrance for lists/grids — children rise one after another. */
+/**
+ * Staggered entrance for lists/grids. Children rise one after another using
+ * nth-child animation delays — no JS orchestration required.
+ */
 export function Stagger({
   children,
   className,
-  stagger = 0.06,
 }: {
   children: React.ReactNode;
   className?: string;
+  /** Kept for API compatibility; cadence is defined in CSS. */
   stagger?: number;
 }) {
-  const reduce = useReducedMotion();
-  return (
-    <motion.div
-      className={className}
-      initial={reduce ? false : "hidden"}
-      animate="show"
-      variants={{
-        hidden: {},
-        show: { transition: { staggerChildren: stagger } },
-      }}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={cn("stagger-children", className)}>{children}</div>;
 }
 
 export function StaggerItem({
@@ -62,20 +55,10 @@ export function StaggerItem({
   children: React.ReactNode;
   className?: string;
 }) {
-  return (
-    <motion.div
-      className={className}
-      variants={{
-        hidden: { opacity: 0, y: 16 },
-        show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: EASE } },
-      }}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={className}>{children}</div>;
 }
 
-/** Count-up number for stat tiles. */
+/** Count-up number for stat tiles — starts when scrolled into view. */
 export function AnimatedNumber({
   value,
   className,
@@ -86,27 +69,45 @@ export function AnimatedNumber({
   duration?: number;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-40px" });
-  const reduce = useReducedMotion();
-  const [display, setDisplay] = useState(reduce ? value : 0);
+  const [display, setDisplay] = useState(0);
 
   useEffect(() => {
-    if (!inView || reduce) {
-      if (reduce) setDisplay(value);
+    const el = ref.current;
+    if (!el) return;
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || value === 0) {
+      setDisplay(value);
       return;
     }
-    let raf: number;
-    const start = performance.now();
-    const from = 0;
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / (duration * 1000));
-      const eased = 1 - Math.pow(1 - t, 3);
-      setDisplay(Math.round(from + (value - from) * eased));
-      if (t < 1) raf = requestAnimationFrame(tick);
+
+    let raf = 0;
+    const run = () => {
+      const start = performance.now();
+      const tick = (now: number) => {
+        const t = Math.min(1, (now - start) / (duration * 1000));
+        setDisplay(Math.round(value * (1 - Math.pow(1 - t, 3))));
+        if (t < 1) raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
     };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [inView, value, duration, reduce]);
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          run();
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "-40px" }
+    );
+    observer.observe(el);
+
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(raf);
+    };
+  }, [value, duration]);
 
   return (
     <span ref={ref} className={cn("tabular-nums", className)}>
@@ -115,7 +116,7 @@ export function AnimatedNumber({
   );
 }
 
-/** Press-scale wrapper for tap targets (buttons, cards). */
+/** Press-scale wrapper for tap targets. */
 export function Pressable({
   children,
   className,
@@ -123,14 +124,5 @@ export function Pressable({
   children: React.ReactNode;
   className?: string;
 }) {
-  const reduce = useReducedMotion();
-  return (
-    <motion.div
-      className={className}
-      whileTap={reduce ? undefined : { scale: 0.97 }}
-      transition={{ type: "spring", stiffness: 500, damping: 30 }}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={cn("press-scale", className)}>{children}</div>;
 }

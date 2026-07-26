@@ -16,7 +16,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <Sidebar role={profile.role} />
       <div className="md:pl-60">
         <TopBar profile={profile} />
-        <main className="mx-auto w-full max-w-6xl px-4 pb-24 pt-4 md:px-6 md:pb-10">
+        {/* pb clears the floating bottom nav + home indicator on phones */}
+        <main className="px-safe mx-auto w-full max-w-6xl pb-[calc(6rem+env(safe-area-inset-bottom))] pt-4 md:px-6 md:pb-10">
           {children}
         </main>
       </div>

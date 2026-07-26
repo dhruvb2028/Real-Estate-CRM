@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -23,12 +24,14 @@ export function PublicGallery({
 
   return (
     <div className="space-y-2">
-      <div className="overflow-hidden rounded-2xl">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+      <div className="relative h-64 overflow-hidden rounded-2xl md:h-96">
+        <Image
           src={images[active]?.url}
           alt={`${title} — photo ${active + 1} of ${images.length}`}
-          className="h-64 w-full object-cover md:h-96"
+          fill
+          sizes="(max-width: 768px) 100vw, 768px"
+          priority
+          className="object-cover"
         />
       </div>
       {images.length > 1 && (
