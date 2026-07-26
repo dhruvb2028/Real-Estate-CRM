@@ -25,7 +25,20 @@ export async function login(
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
-  if (error) return { ok: false, error: "Invalid email or password" };
+  if (error) {
+    // Distinguish "can't reach the server" from "wrong credentials" — showing
+    // the latter for a network blip sends people hunting for a typo.
+    const networkIssue =
+      error.status === 0 ||
+      error.name === "AuthRetryableFetchError" ||
+      /fetch failed|network|ENOTFOUND|ETIMEDOUT/i.test(error.message);
+    return {
+      ok: false,
+      error: networkIssue
+        ? "Can't reach the server. Check your connection and try again."
+        : "Invalid email or password",
+    };
+  }
 
   const next = (formData.get("next") as string) || "/dashboard";
   redirect(next.startsWith("/") ? next : "/dashboard");

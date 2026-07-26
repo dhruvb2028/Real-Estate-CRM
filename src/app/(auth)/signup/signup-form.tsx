@@ -95,7 +95,7 @@ export function SignupForm() {
 
         <p className="mt-5 text-center text-sm text-muted-foreground">
           Already have an account?{" "}
-          <Link href="/login" className="font-semibold text-primary hover:underline">
+          <Link href="/login" className="-my-3 inline-block px-1 py-3 font-semibold text-primary hover:underline">
             Sign in
           </Link>
         </p>

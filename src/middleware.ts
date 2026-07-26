@@ -32,8 +32,17 @@ export async function middleware(request: NextRequest) {
 
   // Validate the session locally (JWKS-verified JWT — no auth-server round
   // trip). Expired tokens still refresh automatically.
-  const { data } = await supabase.auth.getClaims();
-  const user = data?.claims ? { id: data.claims.sub } : null;
+  //
+  // If auth is unreachable this must not take the whole app down: fall back to
+  // "unauthenticated", which sends people to the sign-in page where the error
+  // is explained, instead of throwing a 500 on every route.
+  let user: { id: string } | null = null;
+  try {
+    const { data } = await supabase.auth.getClaims();
+    user = data?.claims ? { id: data.claims.sub } : null;
+  } catch {
+    user = null;
+  }
 
   const { pathname } = request.nextUrl;
 

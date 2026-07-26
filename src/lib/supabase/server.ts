@@ -35,8 +35,15 @@ export async function createClient() {
 export const getCurrentProfile = cache(async (): Promise<Profile | null> => {
   const supabase = await createClient();
   // Local JWT validation (JWKS) — avoids an auth-server round trip per render.
-  const { data } = await supabase.auth.getClaims();
-  const userId = data?.claims?.sub;
+  // Treat an unreachable auth server as "signed out" rather than crashing the
+  // render; callers redirect to sign-in, which surfaces a readable message.
+  let userId: string | undefined;
+  try {
+    const { data } = await supabase.auth.getClaims();
+    userId = data?.claims?.sub;
+  } catch {
+    return null;
+  }
   if (!userId) return null;
 
   const { data: profile } = await supabase

@@ -67,7 +67,7 @@ export function LoginForm({ next }: { next?: string }) {
 
         <p className="mt-5 text-center text-sm text-muted-foreground">
           New here?{" "}
-          <Link href="/signup" className="font-semibold text-primary hover:underline">
+          <Link href="/signup" className="-my-3 inline-block px-1 py-3 font-semibold text-primary hover:underline">
             Create your workspace
           </Link>
         </p>
