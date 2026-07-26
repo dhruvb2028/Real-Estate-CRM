@@ -11,7 +11,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "provision": "tsx scripts/provision-client.ts",
-    "seed:demo": "tsx scripts/seed-users.ts"
+    "seed:demo": "tsx scripts/seed-users.ts",
+    "db:reset": "tsx scripts/reset-database.ts",
+    "verify:schema": "tsx scripts/verify-schema.ts",
+    "smoke": "tsx scripts/smoke-test.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
@@ -43,10 +46,12 @@
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.20",
+    "pg": "^8.22.0",
     "tailwindcss": "^4",
     "tsx": "^4.23.1",
     "typescript": "^5",

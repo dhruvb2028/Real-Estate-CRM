@@ -86,6 +86,17 @@ save it; the admin password is shown only once.
 
 Re-running is safe: it detects existing records instead of duplicating them.
 
+### Add at least one Sales Agent before going live
+
+**This matters.** The bridge call needs somebody to ring. Until the client has at
+least one active user with the **Sales Agent** role, every incoming lead is
+correctly parked as *Call Pending* with a follow-up task — nothing is lost, but
+no phone rings.
+
+So before pointing any lead source at the webhook, have the client invite their
+agents (**More → Team → Invite**) and make sure every agent's profile has a
+phone number saved.
+
 ---
 
 ## 5. Deploy to Vercel (10 min)
@@ -127,6 +138,18 @@ curl -X POST https://crm.theirdomain.com/api/webhooks/leads \
 ```
 
 Expect `201` with `{"ok":true,...}`.
+
+### Or run the whole checklist automatically
+
+```bash
+npm run verify:schema     # tables, RLS, policies, functions, buckets, realtime
+npm run smoke -- https://crm.theirdomain.com
+```
+
+`smoke` signs in, walks all 18 routes, asserts that signup is closed and the
+Twilio webhooks reject unsigned requests, then drives a real lead through
+intake → assignment → bridge call and cleans up after itself. Green means the
+deployment is ready to hand over.
 
 ---
 
