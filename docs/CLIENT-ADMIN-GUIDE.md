@@ -30,6 +30,10 @@ Choose the right role — it controls what each person can see:
 | **Field Executive** | Attendance and assigned site visits |
 | **Social Media Manager** | The content calendar only |
 
+These limits are enforced by the database itself, not just by what the screens
+choose to show. A Sales Agent cannot reach a colleague's leads, calls or
+follow-ups by any route — so your pipeline stays yours even if someone leaves.
+
 The invite link is emailed and also shown on screen so you can send it on
 WhatsApp. Links expire after 7 days; revoke one any time with the ✕ button.
 

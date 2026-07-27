@@ -36,7 +36,7 @@ const EXPECTED_TABLES = [
 const EXPECTED_FUNCTIONS = [
   "get_user_org", "get_user_role", "is_org_manager", "handle_new_user",
   "next_round_robin_agent", "next_least_busy_agent", "get_public_property",
-  "set_updated_at",
+  "set_updated_at", "can_see_lead",
 ];
 
 const EXPECTED_BUCKETS = [
@@ -118,6 +118,22 @@ async function main() {
   const missingRt = ["notifications", "activities", "calls"].filter((t) => !rtNames.includes(t));
   if (missingRt.length) bad(`realtime not enabled on: ${missingRt.join(", ")}`);
   else ok("realtime enabled on notifications, activities, calls");
+
+  // ---- agents must not be able to read the whole pipeline ----
+  // If 0007 failed to apply, leads_select silently falls back to org-wide and
+  // every sales agent can export the firm's entire lead list. Catch that here
+  // rather than discovering it after handover.
+  const { rows: leadPolicy } = await client.query<{ qual: string }>(
+    `select qual from pg_policies
+     where schemaname='public' and tablename='leads' and policyname='leads_select'`
+  );
+  if (!leadPolicy.length) {
+    bad("leads_select policy missing");
+  } else if (!/assigned_agent_id/.test(leadPolicy[0].qual ?? "")) {
+    bad("leads_select is org-wide — every agent can read all leads (migration 0007 not applied)");
+  } else {
+    ok("leads are scoped to the assigned agent (managers still see all)");
+  }
 
   // ---- anon must NOT be able to read business tables directly ----
   const { rows: anonGrants } = await client.query<{ table_name: string }>(

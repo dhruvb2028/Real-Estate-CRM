@@ -177,6 +177,26 @@ async function main() {
       !/Application error|500: Internal/i.test(missingHtml)
   );
 
+  // ---------- configuration ----------
+  section("Client configuration");
+
+  const svc = createClient(SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+    auth: { persistSession: false },
+  });
+  const { data: orgSettings } = await svc
+    .from("integration_settings")
+    .select("organization_id, lead_webhook_secret, whatsapp_mode");
+  check(
+    "every organization has integration settings",
+    (orgSettings?.length ?? 0) > 0,
+    "none found — the client would have no webhook secret"
+  );
+  check(
+    "every organization has a lead webhook secret",
+    !!orgSettings?.length && orgSettings.every((s) => !!s.lead_webhook_secret),
+    "lead intake would fall back to the shared env secret"
+  );
+
   // ---------- core business flow ----------
   section("Lead intake → assignment → bridge call");
 

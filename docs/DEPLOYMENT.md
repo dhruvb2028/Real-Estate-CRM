@@ -38,7 +38,7 @@ supabase db push --db-url "postgresql://postgres:DB_PASSWORD@db.PROJECT_REF.supa
 ```
 
 Applies all migrations in order: schema → functions → RLS → share-page docs →
-WhatsApp mode.
+WhatsApp mode → role grants → agent lead scoping.
 
 Confirm in the Supabase dashboard: **Table Editor** should list `leads`,
 `properties`, `calls`, etc., and **Authentication → Policies** should show RLS
