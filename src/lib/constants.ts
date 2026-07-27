@@ -247,7 +247,10 @@ export function formatBudget(
   return formatPrice(min ?? max);
 }
 
-export function initials(name: string): string {
+export function initials(name: string | null | undefined): string {
+  // Renders in the top bar on every page, so a missing name must not be able
+  // to take the whole app shell down.
+  if (!name) return "";
   return name
     .split(/\s+/)
     .filter(Boolean)

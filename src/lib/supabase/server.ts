@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { cache } from "react";
 import type { Profile } from "@/lib/types";
 
@@ -55,10 +56,19 @@ export const getCurrentProfile = cache(async (): Promise<Profile | null> => {
   return (profile as Profile) ?? null;
 });
 
-/** Throws a redirect-friendly error when unauthenticated or org-less. */
+/**
+ * Current profile, or a redirect to sign-in.
+ *
+ * This must redirect rather than throw. A thrown Error in a Server Component or
+ * Server Action is caught by the nearest error boundary, so an ordinary expired
+ * session would show the user a "something went wrong" crash screen instead of
+ * the login page. Server Actions in particular never render the layout, so its
+ * guard cannot cover them.
+ */
 export async function requireProfile(): Promise<Profile> {
   const profile = await getCurrentProfile();
-  if (!profile) throw new Error("UNAUTHENTICATED");
-  if (!profile.organization_id) throw new Error("NO_ORGANIZATION");
+  // redirect() signals via a special error Next.js handles — never catch it.
+  if (!profile) redirect("/login");
+  if (!profile.organization_id) redirect("/login");
   return profile;
 }

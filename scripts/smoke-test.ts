@@ -232,9 +232,6 @@ async function main() {
     check('source "36 Acre" normalised to 36acre', lead?.source === "36acre", lead?.source);
     check('property type "3BHK" normalised to apartment', lead?.property_type === "apartment", lead?.property_type ?? "null");
 
-    // The bridge call runs after the response; give it a moment.
-    await new Promise((r) => setTimeout(r, 4000));
-
     const { count: agentCount } = await service
       .from("profiles")
       .select("id", { count: "exact", head: true })
@@ -242,10 +239,29 @@ async function main() {
       .eq("is_active", true);
     const hasAgents = (agentCount ?? 0) > 0;
 
-    const { data: calls } = await service
-      .from("calls")
-      .select("status, outcome, duration, is_dry_run")
-      .eq("lead_id", hookBody.leadId);
+    // The bridge call runs after the webhook responds. Poll for it to settle
+    // instead of guessing a fixed delay — a cold or busy server would otherwise
+    // fail a handover check when nothing is actually wrong.
+    const TERMINAL = ["completed", "agent_no_answer", "lead_no_answer", "failed"];
+    const callsFor = async () =>
+      (
+        await service
+          .from("calls")
+          .select("status, outcome, duration, is_dry_run")
+          .eq("lead_id", hookBody.leadId)
+      ).data;
+
+    let calls = await callsFor();
+    if (hasAgents) {
+      for (let i = 0; i < 30 && !(calls?.length && TERMINAL.includes(calls[0].status)); i++) {
+        await new Promise((r) => setTimeout(r, 1000));
+        calls = await callsFor();
+      }
+    } else {
+      // No agent to ring — just give the fallback a moment to be recorded.
+      await new Promise((r) => setTimeout(r, 4000));
+      calls = await callsFor();
+    }
 
     if (hasAgents) {
       check("lead was auto-assigned to an agent", !!lead?.assigned_agent_id);

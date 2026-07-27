@@ -7,9 +7,9 @@ import { TopBar } from "@/components/layout/top-bar";
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const profile = await getCurrentProfile();
   if (!profile) redirect("/login");
-  if (!profile.organization_id) {
-    redirect("/signup");
-  }
+  // Client deployments have signup disabled, so an org-less account can only be
+  // resolved by an admin — send them somewhere that actually loads.
+  if (!profile.organization_id) redirect("/login");
 
   return (
     <div className="min-h-dvh bg-background">
