@@ -53,15 +53,25 @@ function DropdownMenuGroup({ ...props }: MenuPrimitive.Group.Props) {
   return <MenuPrimitive.Group data-slot="dropdown-menu-group" {...props} />
 }
 
+/**
+ * A heading inside a menu.
+ *
+ * Deliberately a plain element rather than Base UI's Menu.GroupLabel: that part
+ * throws "MenuGroupContext is missing" unless it is wrapped in a Menu.Group, so
+ * using it the obvious way took down the whole screen through the error
+ * boundary. A label is presentational here, and this way it cannot crash no
+ * matter where it is used. Wrap items in DropdownMenuGroup when you genuinely
+ * need a labelled group.
+ */
 function DropdownMenuLabel({
   className,
   inset,
   ...props
-}: MenuPrimitive.GroupLabel.Props & {
+}: React.ComponentProps<"div"> & {
   inset?: boolean
 }) {
   return (
-    <MenuPrimitive.GroupLabel
+    <div
       data-slot="dropdown-menu-label"
       data-inset={inset}
       className={cn(
